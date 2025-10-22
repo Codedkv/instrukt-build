@@ -1,17 +1,35 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useUser } from '@/contexts/UserContext';
-import { supabase } from '@/integrations/supabase/client';
-import { Button } from '@/components/ui/button';
-import { LogOut, Shield } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom'
+import { useUser } from '@/contexts/UserContext'
+import { supabase } from '@/integrations/supabase/client'
+import { Button } from '@/components/ui/button'
+import { LogOut, Shield } from 'lucide-react'
+import { toast } from 'sonner'
 
 export function Header() {
-  const navigate = useNavigate();
-  const { user, profile, loading, isAdmin } = useUser();
+  const navigate = useNavigate()
+  const { user, profile, loading, isAdmin } = useUser()
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/');
-  };
+    await supabase.auth.signOut()
+    navigate('/')
+  }
+
+  const handleAdminClick = async () => {
+    // Дополнительная проверка admin-роли (живой запрос в Supabase)
+    const { data: roleData, error } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('role', 'admin')
+      .maybeSingle()
+
+    if (!error && roleData) {
+      navigate('/admin')
+    } else {
+      toast.error('Нет прав администратора!')
+      navigate('/dashboard')
+    }
+  }
 
   return (
     <header className="border-b border-border bg-card">
@@ -26,19 +44,20 @@ export function Header() {
               </span>
             </Link>
           )}
-
           <nav className="flex gap-3">
             {loading ? (
               <div className="h-10 w-20 bg-muted animate-pulse rounded"></div>
             ) : user ? (
               <>
                 {isAdmin && (
-                  <Link to="/admin">
-                    <Button variant="outline" size="sm">
-                      <Shield className="mr-2 h-4 w-4" />
-                      Админ
-                    </Button>
-                  </Link>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAdminClick}
+                  >
+                    <Shield className="mr-2 h-4 w-4" />
+                    Админ
+                  </Button>
                 )}
                 <Button onClick={handleLogout} size="sm">
                   <LogOut className="mr-2 h-4 w-4" />
@@ -63,5 +82,5 @@ export function Header() {
         </div>
       </div>
     </header>
-  );
+  )
 }
