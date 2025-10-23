@@ -1,0 +1,17 @@
+{
+  "welcome": "Welcome",
+  "language": "Language",
+  "home": "Home",
+  "about": "About",
+  "contact": "Contact",
+  "settings": "Settings",
+  "login": "Login",
+  "logout": "Logout",
+  "save": "Save",
+  "cancel": "Cancel",
+  "submit": "Submit",
+  "search": "Search",
+  "loading": "Loading...",
+  "error": "Error",
+  "success": "Success"
+}
