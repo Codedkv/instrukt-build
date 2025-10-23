@@ -17,6 +17,7 @@ export function Header() {
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false)
 
   const handleLogout = async () => {
+    
   }    try {
       const { error } = await supabase.auth.signOut()
       if (error) {
