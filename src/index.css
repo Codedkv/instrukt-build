@@ -66,17 +66,18 @@ All colors MUST be HSL.
 
 /* Dark theme support */
 body.dark {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
+  /* Тёмная тема: тёмный фон + светлый текст + бирюзовые акценты */
+  --background: 222.2 84% 4.9%;        /* Очень тёмный фон */
+  --foreground: 210 40% 98%;           /* Светлый текст */
   
-  --card: 217.2 32.6% 17.5%;
-  --card-foreground: 0 0% 98%;
+  --card: 217.2 32.6% 10%;             /* Тёмные карточки */
+  --card-foreground: 210 40% 98%;      /* Светлый текст на карточках */
   
-  --primary: 173 80% 40%;
-  --primary-foreground: 0 0% 98%;
+  --primary: 173 80% 40%;              /* Бирюзовый */
+  --primary-foreground: 0 0% 100%;     /* Белый текст на бирюзовом */
   
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
+  --border: 217.2 32.6% 17.5%;         /* Тёмные бордеры */
+  --input: 217.2 32.6% 17.5%;          /* Тёмные инпуты */
   
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
