@@ -54,7 +54,7 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
               <option value="uk">🇺🇦 Українська</option>
               <option value="es">🇪🇸 Español</option>
               <option value="fr">🇫🇷 Français</option>
-              <option value="de🇩🇪 Deutsch</option>
+              <option value="de">🇩🇪 Deutsch</option>
             </select>
           </div>
         </div>
