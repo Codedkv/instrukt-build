@@ -6,10 +6,12 @@ import { LogOut, Shield, Menu } from 'lucide-react'
 import { toast } from 'sonner'
 import { useState } from 'react'
 import { BurgerMenu } from '@/components/BurgerMenu'
+import { useTranslation } from 'react-i18next'
 
 export function Header() {
   const navigate = useNavigate()
   const { user, profile, loading, isAdmin } = useUser()
+  const { t } = useTranslation()
   
   // Состояние для управления отображением бургер-меню
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false)
@@ -57,7 +59,7 @@ export function Header() {
                 to="/dashboard"
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
-                Дашборд
+                {t('dashboard')}
               </Link>
               {isAdmin && (
                 <Button
@@ -67,7 +69,7 @@ export function Header() {
                   className="gap-2"
                 >
                   <Shield className="h-4 w-4" />
-                  Админ-панель
+                  {t('adminPanel')}
                 </Button>
               )}
             </nav>
@@ -76,7 +78,7 @@ export function Header() {
           {/* Правая часть: кнопки регистрации/входа или профиль + бургер */}
           <div className="flex items-center gap-3">
             {loading ? (
-              <div className="text-sm text-muted-foreground">Загрузка...</div>
+              <div className="text-sm text-muted-foreground">{t('loading')}</div>
             ) : user ? (
               // Авторизованный пользователь: имя и кнопка выхода
               <>
@@ -90,37 +92,38 @@ export function Header() {
                   className="gap-2"
                 >
                   <LogOut className="h-4 w-4" />
-                  <span className="hidden md:inline">Выход</span>
+                  <span className="hidden md:inline">{t('logout')}</span>
                 </Button>
               </>
             ) : (
               // Неавторизованный пользователь: кнопки входа и регистрации
               <>
-            <Link to="/auth">
-              <Button
-                variant="ghost"
-                size="sm"
-              >
-                Вход
-              </Button>
-            </Link>
-            <Link to="/auth?mode=signup">
-              <Button
-                variant="default"
-                size="sm"
-                              >
-                Регистрация
-              </Button>
-          </Link>
-          </>
-        )}
+                <Link to="/auth">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                  >
+                    {t('login')}
+                  </Button>
+                </Link>
+                <Link to="/auth?mode=signup">
+                  <Button
+                    variant="default"
+                    size="sm"
+                  >
+                    {t('registration')}
+                  </Button>
+                </Link>
+              </>
+            )}
+
             {/* Кнопка-бургер (всегда видна) */}
             <Button
               variant="ghost"
               size="sm"
               onClick={toggleBurgerMenu}
               className="p-2"
-              aria-label="Открыть меню"
+              aria-label={t('openMenu')}
             >
               <Menu className="h-5 w-5" />
             </Button>
