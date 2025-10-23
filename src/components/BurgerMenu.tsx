@@ -41,22 +41,22 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
           {langOpen && (
             <div className="mt-2">
               <select
-                value={i18n.language}
-                onChange={(e) => {
-                  i18n.changeLanguage(e.target.value)
-                  setLangOpen(false)
-                }}
-                className="w-full p-2 rounded border border-border text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"              >
-                <option value="en">🇬🇧 English</option>
-                <option value="ru">🇷🇺 Русский</option>
-                <option value="pl">🇵🇱 Polski</option>
-                <option value="uk">🇺🇦 Українська</option>
-                <option value="es">🇪🇸 Español</option>
-                <option value="fr">🇫🇷 Français</option>
-                <option value="de">🇩🇪 Deutsch</option>
-              </select>
-            </div>
-          )}
+              value={i18n.language}
+              onChange={(e) => {
+                i18n.changeLanguage(e.target.value)
+                setLangOpen(false)
+              }}
+              className="w-full p-2 rounded border border-border text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="en">🇬🇧 English</option>
+              <option value="ru">🇷🇺 Русский</option>
+              <option value="pl">🇵🇱 Polski</option>
+              <option value="uk">🇺🇦 Українська</option>
+              <option value="es">🇪🇸 Español</option>
+              <option value="fr">🇫🇷 Français</option>
+              <option value="de">🇩🇪 Deutsch</option>
+            </select>
+          </div>
         </div>
 
         {/* Тема день/ночь */}
