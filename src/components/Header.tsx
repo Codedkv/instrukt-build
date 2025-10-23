@@ -47,7 +47,7 @@ export function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Левая часть: логотип/название */}
           <Link to="/" className="text-xl font-bold text-primary hover:text-primary/80">
-            instrukt
+            PerplexitySchool
           </Link>
 
           {/* Центральная часть: навигация для авторизованных пользователей */}
