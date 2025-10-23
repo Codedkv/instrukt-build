@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ThemeSwitcher } from './ThemeSwitcher'
 import { useUser } from '@/contexts/UserContext'
@@ -19,61 +20,33 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
     <>
       {/* Overlay (backdrop) */}
       <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          zIndex: 999
-        }}
+        className="fixed inset-0 bg-black/50 z-[999]"
         onClick={onClose}
       />
 
       {/* Меню справа */}
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          right: 0,
-          width: 340,
-          maxWidth: '90%',
-          height: '100%',
-          backgroundColor: 'white',
-          boxShadow: '-2px 0 8px rgba(0, 0, 0, 0.15)',
-          padding: 16,
-          zIndex: 1000,
-          overflowY: 'auto'
-        }}
-      >
+      <div className="fixed top-0 right-0 w-[340px] max-w-[90%] h-auto max-h-screen bg-card shadow-lg p-4 z-[1000] overflow-y-auto">
         {/* Язык */}
-        <div style={{ marginBottom: 20 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontWeight: 600 }}>Язык</span>
+        <div className="mb-5">
+          <div className="flex justify-between items-center">
+            <span className="font-semibold text-foreground">Язык</span>
             <button
               onClick={() => setLangOpen(v => !v)}
-              style={{ border: 'none', background: 'none', fontSize: 24, padding: 4, cursor: 'pointer' }}
+              className="border-none bg-transparent text-2xl p-1 cursor-pointer"
               aria-label="Выбрать язык"
             >
               🌐
             </button>
           </div>
           {langOpen && (
-            <div style={{ marginTop: 8 }}>
+            <div className="mt-2">
               <select
                 value={i18n.language}
                 onChange={(e) => {
                   i18n.changeLanguage(e.target.value)
                   setLangOpen(false)
                 }}
-                style={{
-                  width: '100%',
-                  padding: 8,
-                  borderRadius: 4,
-                  border: '1px solid #ccc',
-                  fontSize: 14
-                }}
+                className="w-full p-2 rounded border border-border text-sm bg-background text-foreground"
               >
                 <option value="en">🇬🇧 English</option>
                 <option value="ru">🇷🇺 Русский</option>
@@ -88,47 +61,30 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
         </div>
 
         {/* Тема день/ночь */}
-        <div style={{ marginBottom: 20 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontWeight: 600 }}>Тема</span>
+        <div className="mb-5">
+          <div className="flex justify-between items-center">
+            <span className="font-semibold text-foreground">Тема</span>
             <ThemeSwitcher />
           </div>
         </div>
 
         {/* Кнопки регистрации/логина - только если НЕ залогинен */}
         {!user && (
-          <div style={{ marginBottom: 20 }}>
-            <button
-              onClick={() => { window.location.href = '/auth'; onClose() }}
-              style={{
-                width: '100%',
-                padding: 8,
-                marginBottom: 8,
-                background: '#20b2aa',
-                color: 'white',
-                border: 'none',
-                borderRadius: 4,
-                fontWeight: 600,
-                cursor: 'pointer'
-              }}
+          <div className="mb-5 flex flex-col gap-2">
+            <Link
+              to="/auth"
+              onClick={onClose}
+              className="w-full py-2 px-4 bg-[#20b2aa] text-white rounded font-semibold text-center hover:bg-[#1a9b93] transition-colors"
             >
               Sign In
-            </button>
-            <button
-              onClick={() => { window.location.href = '/auth?tab=register'; onClose() }}
-              style={{
-                width: '100%',
-                padding: 8,
-                background: '#48d1cc',
-                color: 'white',
-                border: 'none',
-                borderRadius: 4,
-                fontWeight: 600,
-                cursor: 'pointer'
-              }}
+            </Link>
+            <Link
+              to="/auth?mode=signup"
+              onClick={onClose}
+              className="w-full py-2 px-4 bg-[#48d1cc] text-white rounded font-semibold text-center hover:bg-[#3bbcc0] transition-colors"
             >
               Sign Up
-            </button>
+            </Link>
           </div>
         )}
       </div>
