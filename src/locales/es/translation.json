@@ -1,0 +1,17 @@
+{
+  "welcome": "Bienvenido",
+  "language": "Idioma",
+  "home": "Inicio",
+  "about": "Acerca de",
+  "contact": "Contacto",
+  "settings": "Configuración",
+  "login": "Iniciar sesión",
+  "logout": "Cerrar sesión",
+  "save": "Guardar",
+  "cancel": "Cancelar",
+  "submit": "Enviar",
+  "search": "Buscar",
+  "loading": "Cargando...",
+  "error": "Error",
+  "success": "Éxito"
+}
