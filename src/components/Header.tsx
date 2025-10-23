@@ -29,6 +29,7 @@ export function Header() {
     } catch (err) {
       console.error('Logout error:', err)
       toast.error(t('logoutError') || 'Ошибка выхода')
+      }
     }
 
   const handleAdminClick = async () => {
