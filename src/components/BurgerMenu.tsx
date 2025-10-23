@@ -23,9 +23,10 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
         className="fixed inset-0 bg-black/50 z-[999]"
         onClick={onClose}
       />
-
+      
       {/* Меню справа */}
       <div className="fixed top-0 right-0 w-[340px] max-w-[90%] h-auto max-h-screen bg-card shadow-lg p-4 z-[1000] overflow-y-auto">
+        
         {/* Язык */}
         <div className="mb-5">
           <div className="flex justify-between items-center">
@@ -38,28 +39,30 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
               🌐
             </button>
           </div>
+          
           {langOpen && (
             <div className="mt-2">
               <select
-              value={i18n.language}
-              onChange={(e) => {
-                i18n.changeLanguage(e.target.value)
-                setLangOpen(false)
-              }}
-              className="w-full p-2 rounded border border-border text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="en">🇬🇧 English</option>
-              <option value="ru">🇷🇺 Русский</option>
-              <option value="pl">🇵🇱 Polski</option>
-              <option value="uk">🇺🇦 Українська</option>
-              <option value="es">🇪🇸 Español</option>
-              <option value="fr">🇫🇷 Français</option>
-            <option value="de">🇩🇪 Deutsch</option>            </select>
-          </div>
+                value={i18n.language}
+                onChange={(e) => {
+                  i18n.changeLanguage(e.target.value)
+                  setLangOpen(false)
+                }}
+                className="w-full p-2 rounded border border-border text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="en">🇬🇧 English</option>
+                <option value="ru">🇷🇺 Русский</option>
+                <option value="pl">🇵🇱 Polski</option>
+                <option value="uk">🇺🇦 Українська</option>
+                <option value="es">🇪🇸 Español</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="de">🇩🇪 Deutsch</option>
+              </select>
+            </div>
+          )}
         </div>
 
-        {/*
-                Тема день/ночь */}
+        {/* Тема день/ночь */}
         <div className="mb-5">
           <div className="flex justify-between items-center">
             <span className="font-semibold text-foreground">Тема</span>
