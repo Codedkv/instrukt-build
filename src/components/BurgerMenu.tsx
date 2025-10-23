@@ -59,7 +59,8 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
           </div>
         </div>
 
-        {/* Тема день/ночь */}
+        {/*
+                )}Тема день/ночь */}
         <div className="mb-5">
           <div className="flex justify-between items-center">
             <span className="font-semibold text-foreground">Тема</span>
