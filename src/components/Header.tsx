@@ -20,7 +20,8 @@ export function Header() {
     
   try {
             // Пытаемся выйти глобально (со всех устройств)
-      const { error } = await supabase.auth.signOut({ scope: 'global' })if (error) {
+      const { error } = await supabase.auth.signOut({ scope: 'global' })
+            if (error) {
                 // Если сессия уже invalid - делаем local logout
         if (error.message?.includes('session') || error.message?.includes('Session')) {
           console.log('Session already invalid, doing local logout')
