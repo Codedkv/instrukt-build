@@ -108,7 +108,8 @@ export function Header() {
               <Button
                 variant="default"
                 size="sm"
-              >
+                              >
+        
                 Регистрация
               </Button>
             </Link>            )}
