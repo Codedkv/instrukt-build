@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client'
 import { Button } from '@/components/ui/button'
 import { LogOut, Shield } from 'lucide-react'
 import { toast } from 'sonner'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 
 export function Header() {
   const navigate = useNavigate()
@@ -44,7 +45,11 @@ export function Header() {
               </span>
             </Link>
           )}
+
           <nav className="flex gap-3">
+            {/* Language and theme switcher block */}
+            <LanguageSwitcher />
+
             {loading ? (
               <div className="h-10 w-20 bg-muted animate-pulse rounded"></div>
             ) : user ? (
@@ -67,7 +72,7 @@ export function Header() {
             ) : (
               <>
                 <Link to="/auth">
-                  <Button variant="outline" size="sm">
+                  <Button size="sm" variant="outline">
                     Войти
                   </Button>
                 </Link>
