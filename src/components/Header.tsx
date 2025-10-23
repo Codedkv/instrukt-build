@@ -17,9 +17,18 @@ export function Header() {
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false)
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    navigate('/')
-  }
+  }    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        console.error('Logout error:', error)
+        toast.error(t('logoutError') || 'Ошибка выхода')
+        return
+      }
+      navigate('/')
+    } catch (err) {
+      console.error('Logout error:', err)
+      toast.error(t('logoutError') || 'Ошибка выхода')
+    }
 
   const handleAdminClick = async () => {
     // Дополнительная проверка admin-роли (живой запрос в Supabase)
