@@ -1,41 +1,43 @@
-import { useState, FormEvent } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { withPublicOnly } from '@/lib/withAuth';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { toast } from 'sonner';
-import { useSearchParams } from 'react-router-dom';
+import { useState, FormEvent } from 'react'
+import { supabase } from '@/integrations/supabase/client'
+import { withPublicOnly } from '@/lib/withAuth'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { toast } from 'sonner'
+import { useSearchParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 function AuthPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const mode = searchParams.get('mode') || 'login';
-  const isSignUp = mode === 'signup';
+  const { t } = useTranslation()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const mode = searchParams.get('mode') || 'login'
+  const isSignUp = mode === 'signup'
 
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault()
+    setLoading(true)
 
     try {
       if (isSignUp) {
         if (password !== confirmPassword) {
-          toast.error('Пароли не совпадают');
-          return;
+          toast.error(t('passwordsDontMatch'))
+          return
         }
 
         if (password.length < 6) {
-          toast.error('Пароль должен быть минимум 6 символов');
-          return;
+          toast.error(t('passwordMinLength'))
+          return
         }
 
-        const redirectUrl = `${window.location.origin}/`;
+        const redirectUrl = `${window.location.origin}/`
         
         const { error } = await supabase.auth.signUp({
           email,
@@ -47,56 +49,56 @@ function AuthPage() {
               full_name: ''
             }
           }
-        });
+        })
 
         if (error) {
-          toast.error(error.message);
+          toast.error(error.message)
         } else {
-          toast.success('Регистрация успешна! Добро пожаловать.');
+          toast.success(t('registrationSuccess'))
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password
-        });
+        })
 
         if (error) {
-          toast.error(error.message);
+          toast.error(error.message)
         }
       }
     } catch (err) {
-      toast.error('Произошла ошибка');
+      toast.error(t('errorOccurred'))
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>{isSignUp ? 'Регистрация' : 'Вход'}</CardTitle>
+          <CardTitle>{isSignUp ? t('authSignup') : t('authLogin')}</CardTitle>
           <CardDescription>
-            {isSignUp ? 'Создайте аккаунт для доступа к урокам' : 'Войдите в свой аккаунт'}
+            {isSignUp ? t('authSignupDesc') : t('authLoginDesc')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('email')}</Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="your@email.com"
+                placeholder={t('emailPlaceholder')}
               />
             </div>
 
             {isSignUp && (
               <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username">{t('username')}</Label>
                 <Input
                   id="username"
                   type="text"
@@ -104,13 +106,13 @@ function AuthPage() {
                   onChange={(e) => setUsername(e.target.value)}
                   required
                   minLength={3}
-                  placeholder="yourusername"
+                  placeholder={t('usernamePlaceholder')}
                 />
               </div>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="password">Пароль</Label>
+              <Label htmlFor="password">{t('password')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -118,48 +120,48 @@ function AuthPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                placeholder="••••••••"
+                placeholder={t('passwordPlaceholder')}
               />
             </div>
 
             {isSignUp && (
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Подтвердите пароль</Label>
+                <Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  placeholder="••••••••"
+                  placeholder={t('passwordPlaceholder')}
                 />
               </div>
             )}
 
             <Button type="submit" disabled={loading} className="w-full">
-              {loading ? 'Загрузка...' : isSignUp ? 'Зарегистрироваться' : 'Войти'}
+              {loading ? t('loading') : isSignUp ? t('signupButton') : t('loginButton')}
             </Button>
           </form>
 
           <div className="text-center text-sm text-muted-foreground mt-6">
             {isSignUp ? (
               <>
-                Уже есть аккаунт?{' '}
+                {t('alreadyHaveAccount')}{' '}
                 <button
                   onClick={() => setSearchParams({})}
                   className="text-primary hover:underline"
                 >
-                  Войти
+                  {t('loginButton')}
                 </button>
               </>
             ) : (
               <>
-                Нет аккаунта?{' '}
+                {t('noAccount')}{' '}
                 <button
                   onClick={() => setSearchParams({ mode: 'signup' })}
                   className="text-primary hover:underline"
                 >
-                  Зарегистрироваться
+                  {t('signupButton')}
                 </button>
               </>
             )}
@@ -167,7 +169,7 @@ function AuthPage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
 
-export default withPublicOnly(AuthPage);
+export default withPublicOnly(AuthPage)
