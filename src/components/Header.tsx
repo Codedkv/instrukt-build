@@ -109,11 +109,11 @@ export function Header() {
                 variant="default"
                 size="sm"
                               >
-        
                 Регистрация
               </Button>
-            </Link>            )}
-
+          </Link>
+          </>
+        )}
             {/* Кнопка-бургер (всегда видна) */}
             <Button
               variant="ghost"
