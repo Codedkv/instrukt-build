@@ -1,0 +1,17 @@
+{
+  "welcome": "Witamy",
+  "language": "Język",
+  "home": "Strona główna",
+  "about": "O nas",
+  "contact": "Kontakt",
+  "settings": "Ustawienia",
+  "login": "Zaloguj się",
+  "logout": "Wyloguj się",
+  "save": "Zapisz",
+  "cancel": "Anuluj",
+  "submit": "Prześlij",
+  "search": "Szukaj",
+  "loading": "Ładowanie...",
+  "error": "Błąd",
+  "success": "Sukces"
+}
