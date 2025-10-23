@@ -19,17 +19,25 @@ export function Header() {
   const handleLogout = async () => {
     
   try {
-      const { error } = await supabase.auth.signOut()
-      if (error) {
+            // Пытаемся выйти глобально (со всех устройств)
+      const { error } = await supabase.auth.signOut({ scope: 'global' })if (error) {
+                // Если сессия уже invalid - делаем local logout
+        if (error.message?.includes('session') || error.message?.includes('Session')) {
+          console.log('Session already invalid, doing local logout')
+          await supabase.auth.signOut({ scope: 'local' })
+          navigate('/')
+          return
+        }
         console.error('Logout error:', error)
         toast.error(t('logoutError') || 'Ошибка выхода')
         return
       }
       navigate('/')
     } catch (err) {
-      console.error('Logout error:', err)
-      toast.error(t('logoutError') || 'Ошибка выхода')
-      }
+            console.error('Logout error:', err)
+      // Fallback - делаем local logout
+      await supabase.auth.signOut({ scope: 'local' })
+      navigate('/')}
     }
 
   const handleAdminClick = async () => {
