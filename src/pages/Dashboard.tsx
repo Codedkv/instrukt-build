@@ -5,41 +5,44 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { BookOpen, Gift } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 function DashboardPage() {
   const { profile } = useUser();
+  const { t, i18n } = useTranslation();
 
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold mb-2">
-          Добро пожаловать, {profile?.username || profile?.email}!
+          {t('welcomeUser', { name: profile?.username || profile?.email })}
         </h1>
-        <p className="text-muted-foreground mb-8">Ваш личный кабинет</p>
-
+        <p className="text-muted-foreground mb-8">{t('yourDashboard')}</p>
+        
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Gift className="h-5 w-5 text-primary" />
-                Perplexity Pro
+                {t('perplexityPro')}
               </CardTitle>
               <CardDescription>
                 {profile?.has_perplexity_pro ? (
                   <span className="text-success">
-                    ✅ Активен до{' '}
-                    {profile.perplexity_pro_expires_at &&
-                      new Date(profile.perplexity_pro_expires_at).toLocaleDateString('ru-RU')}
+                    ✅ {t('activeUntil', { 
+                      date: profile.perplexity_pro_expires_at &&
+                        new Date(profile.perplexity_pro_expires_at).toLocaleDateString(i18n.language === 'ru' ? 'ru-RU' : 'en-US')
+                    })}
                   </span>
                 ) : (
-                  <span>Промокод ожидает активации</span>
+                  <span>{t('promoWaiting')}</span>
                 )}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Link to="/dashboard/perplexity-pro">
                 <Button>
-                  {profile?.has_perplexity_pro ? 'Управление' : 'Активировать'}
+                  {profile?.has_perplexity_pro ? t('manage') : t('activate')}
                 </Button>
               </Link>
             </CardContent>
@@ -49,16 +52,16 @@ function DashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BookOpen className="h-5 w-5 text-primary" />
-                Мои уроки
+                {t('myLessons')}
               </CardTitle>
               <CardDescription>
-                Продолжайте обучение работе с AI
+                {t('continueWithAI')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Link to="/lessons">
                 <Button>
-                  Перейти к урокам
+                  {t('goToLessons')}
                 </Button>
               </Link>
             </CardContent>
