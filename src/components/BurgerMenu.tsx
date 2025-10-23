@@ -11,7 +11,7 @@ interface BurgerMenuProps {
 
 export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
   const [langOpen, setLangOpen] = useState(false)
-  const { i18n } = useTranslation()
+  const { i18n, t } = useTranslation()
   const { user } = useUser()
 
   if (!isOpen) return null
@@ -30,7 +30,7 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
         {/* Язык */}
         <div className="mb-5">
           <div className="flex justify-between items-center">
-            <span className="font-semibold text-foreground">Язык</span>
+            <span className="font-semibold text-foreground">{t('language')}</span>
             <button
               onClick={() => setLangOpen(v => !v)}
               className="border-none bg-transparent text-2xl p-1 cursor-pointer"
@@ -65,7 +65,7 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
         {/* Тема день/ночь */}
         <div className="mb-5">
           <div className="flex justify-between items-center">
-            <span className="font-semibold text-foreground">Тема</span>
+            <span className="font-semibold text-foreground">{t('theme')}</span>
             <ThemeSwitcher />
           </div>
         </div>
@@ -78,14 +78,14 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
               onClick={onClose}
               className="w-full py-2 px-4 bg-[#20b2aa] text-white rounded font-semibold text-center hover:bg-[#1a9b93] transition-colors"
             >
-              Sign In
+              {t('signIn')}
             </Link>
             <Link
               to="/auth?mode=signup"
               onClick={onClose}
               className="w-full py-2 px-4 bg-[#48d1cc] text-white rounded font-semibold text-center hover:bg-[#3bbcc0] transition-colors"
             >
-              Sign Up
+              {t('signUp')}
             </Link>
           </div>
         )}
