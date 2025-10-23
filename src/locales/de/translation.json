@@ -1,0 +1,17 @@
+{
+  "welcome": "Willkommen",
+  "language": "Sprache",
+  "home": "Startseite",
+  "about": "Über uns",
+  "contact": "Kontakt",
+  "settings": "Einstellungen",
+  "login": "Anmelden",
+  "logout": "Abmelden",
+  "save": "Speichern",
+  "cancel": "Abbrechen",
+  "submit": "Absenden",
+  "search": "Suchen",
+  "loading": "Laden...",
+  "error": "Fehler",
+  "success": "Erfolg"
+}
