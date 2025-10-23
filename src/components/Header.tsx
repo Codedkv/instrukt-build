@@ -2,13 +2,17 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useUser } from '@/contexts/UserContext'
 import { supabase } from '@/integrations/supabase/client'
 import { Button } from '@/components/ui/button'
-import { LogOut, Shield } from 'lucide-react'
+import { LogOut, Shield, Menu } from 'lucide-react'
 import { toast } from 'sonner'
-import { LanguageSwitcher } from '@/components/LanguageSwitcher'
+import { useState } from 'react'
+import { BurgerMenu } from '@/components/BurgerMenu'
 
 export function Header() {
   const navigate = useNavigate()
   const { user, profile, loading, isAdmin } = useUser()
+  
+  // Состояние для управления отображением бургер-меню
+  const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false)
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -32,60 +36,104 @@ export function Header() {
     }
   }
 
+  // Обработчик открытия/закрытия бургер-меню
+  const toggleBurgerMenu = () => {
+    setIsBurgerMenuOpen(!isBurgerMenuOpen)
+  }
+
   return (
     <header className="border-b border-border bg-card">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex justify-between items-center">
-          {user ? (
-            <span className="text-2xl font-bold text-foreground">PerplexitySchool</span>
-          ) : (
-            <Link to="/">
-              <span className="text-2xl font-bold text-foreground hover:text-primary transition cursor-pointer">
-                PerplexitySchool
-              </span>
-            </Link>
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          {/* Левая часть: логотип/название */}
+          <Link to="/" className="text-xl font-bold text-primary hover:text-primary/80">
+            instrukt
+          </Link>
+
+          {/* Центральная часть: навигация для авторизованных пользователей */}
+          {user && (
+            <nav className="hidden md:flex items-center gap-4">
+              <Link
+                to="/dashboard"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Дашборд
+              </Link>
+              {isAdmin && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleAdminClick}
+                  className="gap-2"
+                >
+                  <Shield className="h-4 w-4" />
+                  Админ-панель
+                </Button>
+              )}
+            </nav>
           )}
 
-          <nav className="flex gap-3">
-            {/* Language and theme switcher block */}
-            <LanguageSwitcher />
-
+          {/* Правая часть: кнопки регистрации/входа или профиль + бургер */}
+          <div className="flex items-center gap-3">
             {loading ? (
-              <div className="h-10 w-20 bg-muted animate-pulse rounded"></div>
+              <div className="text-sm text-muted-foreground">Загрузка...</div>
             ) : user ? (
+              // Авторизованный пользователь: имя и кнопка выхода
               <>
-                {isAdmin && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleAdminClick}
-                  >
-                    <Shield className="mr-2 h-4 w-4" />
-                    Админ
-                  </Button>
-                )}
-                <Button onClick={handleLogout} size="sm">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Выйти
+                <span className="hidden md:inline text-sm text-muted-foreground">
+                  {profile?.full_name || user.email}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="gap-2"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span className="hidden md:inline">Выход</span>
                 </Button>
               </>
             ) : (
+              // Неавторизованный пользователь: кнопки входа и регистрации
               <>
-                <Link to="/auth">
-                  <Button size="sm" variant="outline">
-                    Войти
-                  </Button>
-                </Link>
-                <Link to="/auth?mode=signup">
-                  <Button size="sm">
-                    Регистрация
-                  </Button>
-                </Link>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/auth')}
+                >
+                  Вход
+                </Button>
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() => navigate('/auth?tab=register')}
+                >
+                  Регистрация
+                </Button>
               </>
             )}
-          </nav>
+
+            {/* Кнопка-бургер (всегда видна) */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleBurgerMenu}
+              className="p-2"
+              aria-label="Открыть меню"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
       </div>
+
+      {/* Компонент бургер-меню (overlay) */}
+      {isBurgerMenuOpen && (
+        <BurgerMenu
+          isOpen={isBurgerMenuOpen}
+          onClose={() => setIsBurgerMenuOpen(false)}
+        />
+      )}
     </header>
   )
 }
