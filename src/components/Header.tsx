@@ -96,22 +96,22 @@ export function Header() {
             ) : (
               // Неавторизованный пользователь: кнопки входа и регистрации
               <>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate('/auth')}
-                >
-                  Вход
-                </Button>
-                <Button
-                  variant="default"
-                  size="sm"
-                  onClick={() => navigate('/auth?tab=register')}
-                >
-                  Регистрация
-                </Button>
-              </>
-            )}
+            <Link to="/auth">
+              <Button
+                variant="ghost"
+                size="sm"
+              >
+                Вход
+              </Button>
+            </Link>
+            <Link to="/auth?mode=signup">
+              <Button
+                variant="default"
+                size="sm"
+              >
+                Регистрация
+              </Button>
+            </Link>            )}
 
             {/* Кнопка-бургер (всегда видна) */}
             <Button
