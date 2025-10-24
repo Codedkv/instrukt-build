@@ -89,10 +89,34 @@ export function UserProvider({ children }: { children: ReactNode }) {
           setLoading(false);
         }
       }
-    });
+    })
+      
+          // Периодическая проверка валидности сессии (каждые 30 секунд)
+        const sessionCheckInterval = setInterval(async () => {
+                if (!mounted) return;
+          
+                try {
+                          const { data: { session: currentSession }, error } = await supabase.auth.getSession();
+                  
+                          // Если была сессия, но теперь ее нет - значит она была инвалидирована
+                          if (session && !currentSession && !error) {
+                                      console.log('Session invalidated, logging out');
+                                      // Очищаем локальное состояние
+                                      setSession(null);
+                                      setUser(null);
+                                      setProfile(null);
+                                      setIsAdmin(false);
+                                      // Очищаем localStorage
+                                      await supabase.auth.signOut({ scope: 'local' });
+                                    }
+                        } catch (err) {
+                          console.error('Session check error:', err);
+                        }
+              }, 30000); // Проверка каждые 30 секунд;
 
     return () => {
       mounted = false;
+            clearInterval(sessionCheckInterval);
       subscription.unsubscribe();
     };
   }, []);
