@@ -17,42 +17,10 @@ export function Header() {
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false)
 
   const handleLogout = async () => {
-    
-  try {
-            // Пытаемся выйти глобально (со всех устройств)
-      const { error } = await supabase.auth.signOut({ scope: 'global' })
-            if (error) {
-                // Если сессия уже invalid - делаем local logout
-        if (error.message?.includes('session') || error.message?.includes('Session')) {
-          console.log('Session already invalid, doing local logout')
-          await supabase.auth.signOut({ scope: 'local' })
-          navigate('/')
-          return
-        }
-        console.error('Logout error:', error)
-        toast.error(t('logoutError') || 'Ошибка выхода')
-        return
-      }
-      navigate('/')
-    } catch (err) {
-          console.error('Logout error:', err)
-    // При любой ошибке принудительно очищаем все и перенаправляем
-    console.log('Force clearing localStorage and redirecting')
-    
-    // Очищаем localStorage напрямую
-    localStorage.removeItem('sb-pekekbphrsvpjnbxkhpi-auth-token')
-    localStorage.removeItem('supabase.auth.token')
-    
-    // Принудительно делаем local logout для очистки остальных данных
-    try {
-      await supabase.auth.signOut({ scope: 'local' })
-    } catch (localErr) {
-      console.log('Local logout also failed, clearing manually:', localErr)
-    }
-    
-    // В любом случае перенаправляем
-    navigate('/)
-               
+    await supabase.auth.signOut()
+    navigate('/')
+  }
+
   const handleAdminClick = async () => {
     // Дополнительная проверка admin-роли (живой запрос в Supabase)
     const { data: roleData, error } = await supabase
