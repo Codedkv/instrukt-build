@@ -51,8 +51,8 @@ export function Header() {
     }
     
     // В любом случае перенаправляем
-    navigate('/')
-
+    navigate('/'
+       }
   const handleAdminClick = async () => {
     // Дополнительная проверка admin-роли (живой запрос в Supabase)
     const { data: roleData, error } = await supabase
