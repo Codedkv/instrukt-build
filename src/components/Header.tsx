@@ -35,11 +35,23 @@ export function Header() {
       }
       navigate('/')
     } catch (err) {
-            console.error('Logout error:', err)
-      // Fallback - делаем local logout
+          console.error('Logout error:', err)
+    // При любой ошибке принудительно очищаем все и перенаправляем
+    console.log('Force clearing localStorage and redirecting')
+    
+    // Очищаем localStorage напрямую
+    localStorage.removeItem('sb-pekekbphrsvpjnbxkhpi-auth-token')
+    localStorage.removeItem('supabase.auth.token')
+    
+    // Принудительно делаем local logout для очистки остальных данных
+    try {
       await supabase.auth.signOut({ scope: 'local' })
-      navigate('/')}
+    } catch (localErr) {
+      console.log('Local logout also failed, clearing manually:', localErr)
     }
+    
+    // В любом случае перенаправляем
+    navigate('/')
 
   const handleAdminClick = async () => {
     // Дополнительная проверка admin-роли (живой запрос в Supabase)
