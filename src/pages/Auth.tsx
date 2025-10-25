@@ -5,11 +5,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { toast } from 'sonner'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
-function AuthPage() {
   const { t } = useTranslation()
   const [searchParams, setSearchParams] = useSearchParams()
   const mode = searchParams.get('mode') || 'login'
@@ -19,8 +17,8 @@ function AuthPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [loading, setLoading] = useState(false
-                                          const [message, setMessage] = useState<{text: string, type: 'success' | 'error'} | null>(null))
+  const [loading, setLoading] = useState(false)
+                                            const [message, setMessage] = useState<{text: string; type: 'success' | 'error'} | null>(null)
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -29,12 +27,12 @@ function AuthPage() {
     try {
       if (isSignUp) {
         if (password !== confirmPassword) {
-          toast.error(t('passwordsDontMatch'))
+                  setMessage({ text: t('passwordsDontMatch'), type: 'error' })
           return
         }
 
         if (password.length < 6) {
-          toast.error(t('passwordMinLength'))
+                  setMessage({ text: t('passwordMinLength'), type: 'error' })
           return
         }
 
@@ -53,7 +51,7 @@ function AuthPage() {
         })
 
         if (error) {
-          toast.error(error.message)
+                  setMessage({ text: error.message, type: 'error' })
         } else {
         setMessage({
           text: t('emailConfirmationSent'),
@@ -67,12 +65,11 @@ function AuthPage() {
         })
 
         if (error) {
-          toast.error(error.message)
+                  setMessage({ text: error.message, type: 'error' })
         }
       }
     } catch (err) {
-      toast.error(t('errorOccurred'))
-    } finally {
+      setMessage({ text: error.message, type: 'error' })    } finally {
       setLoading(false)
     }
   }
