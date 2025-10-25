@@ -19,8 +19,7 @@ function AuthPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [loading, setLoading] = useState(false
-                                          const [message, setMessage] = useState<{text: string, type: 'success' | 'error'} | null>(null))
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -55,10 +54,7 @@ function AuthPage() {
         if (error) {
           toast.error(error.message)
         } else {
-        setMessage({
-          text: t('emailConfirmationSent'),
-          type: 'success'
-        })
+          toast.success(t('registrationSuccess'))
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -86,24 +82,7 @@ function AuthPage() {
             {isSignUp ? t('authSignupDesc') : t('authLoginDesc')}
           </CardDescription>
         </CardHeader>
-        <CardContent
-                  {message && (
-          <div className={`p-4 mb-4 rounded-md border ${
-            message.type === 'success' 
-              ? 'bg-teal-50 border-teal-200 text-teal-800' 
-              : 'bg-red-50 border-red-200 text-red-800'
-          }`}>
-            <p className="text-sm font-medium">
-              {message.type === 'success' ? '✓ ' : '⚠ '}
-              {message.text}
-              {message.type === 'success' && (
-                <span className="block text-xs mt-1 text-teal-600">
-                  {t('checkSpamFolder')}
-                </span>
-              )}
-            </p>
-          </div>
-        )}>
+        <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">{t('email')}</Label>
