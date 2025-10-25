@@ -3,9 +3,11 @@ import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
 import { BookOpen, Sparkles, Target } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useUser } from '@/contexts/UserContext'
 
 const Index = () => {
   const { t } = useTranslation()
+  const { user } = useUser()
   
   return (
     <Layout>
@@ -17,18 +19,22 @@ const Index = () => {
           <p className="text-xl md:text-2xl text-muted-foreground mb-8">
             {t('indexSubtitle')}
           </p>
-          <div className="flex gap-4 justify-center flex-wrap">
-            <Link to="/auth?mode=signup">
-              <Button size="lg" className="text-lg">
-                {t('startLearning')}
-              </Button>
-            </Link>
-            <Link to="/auth">
-              <Button size="lg" variant="outline" className="text-lg">
-                {t('enter')}
-              </Button>
-            </Link>
-          </div>
+          
+          {/* Показываем кнопки регистрации/входа только если пользователь НЕ залогинен */}
+          {!user && (
+            <div className="flex gap-4 justify-center flex-wrap">
+              <Link to="/auth?mode=signup">
+                <Button size="lg" className="text-lg">
+                  {t('startLearning')}
+                </Button>
+              </Link>
+              <Link to="/auth">
+                <Button size="lg" variant="outline" className="text-lg">
+                  {t('enter')}
+                </Button>
+              </Link>
+            </div>
+          )}
 
           <div className="grid md:grid-cols-3 gap-8 mt-20">
             <div className="text-center">
