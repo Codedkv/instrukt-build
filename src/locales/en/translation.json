@@ -52,6 +52,8 @@
   "adminTitle": "Administrator Panel",
   "adminDescription": "Manage users and promo codes",
   "userManagement": "User Management",
+    "emailConfirmationSent": "Please confirm your registration by clicking the link in the email we sent you.",
+    "checkSpamFolder": "If you don't see the email in your inbox, please check your spam folder.",
   "promoCodeManagement": "Promo Code Management",
   "totalUsers": "Total Users",
   "activePromoCodes": "Active Promo Codes",
