@@ -5,9 +5,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { toast } from 'sonner'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
+function AuthPage() {
   const { t } = useTranslation()
   const [searchParams, setSearchParams] = useSearchParams()
   const mode = searchParams.get('mode') || 'login'
@@ -17,8 +19,8 @@ import { useTranslation } from 'react-i18next'
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-                                            const [message, setMessage] = useState<{text: string; type: 'success' | 'error'} | null>(null)
+  const [loading, setLoading] = useState(false
+                                          const [message, setMessage] = useState<{text: string, type: 'success' | 'error'} | null>(null))
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -27,12 +29,12 @@ import { useTranslation } from 'react-i18next'
     try {
       if (isSignUp) {
         if (password !== confirmPassword) {
-                  setMessage({ text: t('passwordsDontMatch'), type: 'error' })
+          toast.error(t('passwordsDontMatch'))
           return
         }
 
         if (password.length < 6) {
-                  setMessage({ text: t('passwordMinLength'), type: 'error' })
+          toast.error(t('passwordMinLength'))
           return
         }
 
@@ -51,7 +53,7 @@ import { useTranslation } from 'react-i18next'
         })
 
         if (error) {
-                  setMessage({ text: error.message, type: 'error' })
+          toast.error(error.message)
         } else {
         setMessage({
           text: t('emailConfirmationSent'),
@@ -65,11 +67,12 @@ import { useTranslation } from 'react-i18next'
         })
 
         if (error) {
-                  setMessage({ text: error.message, type: 'error' })
+          toast.error(error.message)
         }
       }
     } catch (err) {
-      setMessage({ text: error.message, type: 'error' })    } finally {
+      toast.error(t('errorOccurred'))
+    } finally {
       setLoading(false)
     }
   }
@@ -83,7 +86,7 @@ import { useTranslation } from 'react-i18next'
             {isSignUp ? t('authSignupDesc') : t('authLoginDesc')}
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent
                   {message && (
           <div className={`p-4 mb-4 rounded-md border ${
             message.type === 'success' 
@@ -104,7 +107,7 @@ import { useTranslation } from 'react-i18next'
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">{t('email')}</Label>
-             <Input
+              <Input
                 id="email"
                 type="email"
                 value={email}
