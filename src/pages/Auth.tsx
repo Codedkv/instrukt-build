@@ -104,7 +104,7 @@ import { useTranslation } from 'react-i18next'
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">{t('email')}</Label>
-              <Input
+             <Input
                 id="email"
                 type="email"
                 value={email}
