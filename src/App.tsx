@@ -11,6 +11,7 @@ import Lessons from "./pages/Lessons";
 import PerplexityPro from "./pages/PerplexityPro";
 import Admin from "./pages/Admin";
 import AdminLessons from "./pages/AdminLessons";
+import UserLessons from './pages/UserLessons';
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/perplexity-pro" element={<PerplexityPro />} />
             <Route path="/lessons" element={<Lessons />} />
+                        <Route path="/my-lessons" element={<UserLessons />} />
             <Route path="/admin" element={<Admin />} />
                         <Route path="/admin/lessons" element={<AdminLessons />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
