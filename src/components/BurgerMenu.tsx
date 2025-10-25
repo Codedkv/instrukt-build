@@ -54,7 +54,7 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
               <img 
                 src={currentFlag.flag} 
                 alt={currentFlag.name}
-                className="w-8 h-8 rounded-full object-cover"
+                className="w-5 h-5 rounded-full object-cover"
               />
             </button>
           </div>
@@ -69,7 +69,7 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
                     setLangOpen(false)
                   }}
                   className={`
-                    relative w-12 h-12 rounded-full overflow-hidden 
+                    relative w-8 h-8 rounded-full overflow-hidden 
                     border-2 transition-all cursor-pointer
                     hover:scale-110 hover:shadow-lg
                     ${
