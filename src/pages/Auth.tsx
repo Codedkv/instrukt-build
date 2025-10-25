@@ -83,7 +83,7 @@ import { useTranslation } from 'react-i18next'
             {isSignUp ? t('authSignupDesc') : t('authLoginDesc')}
           </CardDescription>
         </CardHeader>
-        <CardContent
+        <CardContent>
                   {message && (
           <div className={`p-4 mb-4 rounded-md border ${
             message.type === 'success' 
