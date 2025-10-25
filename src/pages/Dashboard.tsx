@@ -61,7 +61,7 @@ function DashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Link to="/lessons">
+              <Link to="/my-lessons">
                 <Button>
                   {t('goToLessons')}
                 </Button>
