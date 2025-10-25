@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Plus, GripVertical, Trash2, Edit, Eye, EyeOff, Save, X } from 'lucide-react'
-import { useToast } from '@/hooks/useToast'
+import { useToast } from '@/hooks/use-toast'
 
 interface Lesson {
   id: string
