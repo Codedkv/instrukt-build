@@ -9,12 +9,26 @@ interface BurgerMenuProps {
   onClose: () => void
 }
 
+// Маппинг языков на флаги (используем CDN Circle Flags)
+const languageFlags = {
+  en: { flag: 'https://hatscripts.github.io/circle-flags/flags/gb.svg', name: 'English' },
+  ru: { flag: 'https://hatscripts.github.io/circle-flags/flags/ru.svg', name: 'Русский' },
+  pl: { flag: 'https://hatscripts.github.io/circle-flags/flags/pl.svg', name: 'Polski' },
+  uk: { flag: 'https://hatscripts.github.io/circle-flags/flags/ua.svg', name: 'Українська' },
+  es: { flag: 'https://hatscripts.github.io/circle-flags/flags/es.svg', name: 'Español' },
+  fr: { flag: 'https://hatscripts.github.io/circle-flags/flags/fr.svg', name: 'Français' },
+  de: { flag: 'https://hatscripts.github.io/circle-flags/flags/de.svg', name: 'Deutsch' },
+} as const
+
 export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
   const [langOpen, setLangOpen] = useState(false)
   const { i18n, t } = useTranslation()
   const { user } = useUser()
 
   if (!isOpen) return null
+
+  const currentLanguage = (i18n.language in languageFlags) ? i18n.language as keyof typeof languageFlags : 'en'
+  const currentFlag = languageFlags[currentLanguage]
 
   return (
     <>
@@ -33,31 +47,47 @@ export function BurgerMenu({ isOpen, onClose }: BurgerMenuProps) {
             <span className="font-semibold text-foreground">{t('language')}</span>
             <button
               onClick={() => setLangOpen(v => !v)}
-              className="border-none bg-transparent text-2xl p-1 cursor-pointer"
+              className="border-none bg-transparent p-1 cursor-pointer"
               aria-label="Выбрать язык"
             >
-              🌐
+              {/* Показываем флаг текущего языка */}
+              <img 
+                src={currentFlag.flag} 
+                alt={currentFlag.name}
+                className="w-8 h-8 rounded-full object-cover"
+              />
             </button>
           </div>
           
           {langOpen && (
-            <div className="mt-2">
-              <select
-                value={i18n.language}
-                onChange={(e) => {
-                  i18n.changeLanguage(e.target.value)
-                  setLangOpen(false)
-                }}
-                className="w-full p-2 rounded border border-border text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option value="en">🇬🇧 English</option>
-                <option value="ru">🇷🇺 Русский</option>
-                <option value="pl">🇵🇱 Polski</option>
-                <option value="uk">🇺🇦 Українська</option>
-                <option value="es">🇪🇸 Español</option>
-                <option value="fr">🇫🇷 Français</option>
-                <option value="de">🇩🇪 Deutsch</option>
-              </select>
+            <div className="mt-3 flex flex-wrap gap-2 justify-center">
+              {Object.entries(languageFlags).map(([code, { flag, name }]) => (
+                <button
+                  key={code}
+                  onClick={() => {
+                    i18n.changeLanguage(code)
+                    setLangOpen(false)
+                  }}
+                  className={`
+                    relative w-12 h-12 rounded-full overflow-hidden 
+                    border-2 transition-all cursor-pointer
+                    hover:scale-110 hover:shadow-lg
+                    ${
+                      i18n.language === code 
+                        ? 'border-primary ring-2 ring-primary ring-offset-2' 
+                        : 'border-border hover:border-primary/50'
+                    }
+                  `}
+                  title={name}
+                  aria-label={name}
+                >
+                  <img 
+                    src={flag} 
+                    alt={name}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
             </div>
           )}
         </div>
