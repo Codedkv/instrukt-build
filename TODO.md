@@ -13,6 +13,8 @@
 - [x] Basic auth & registration flow
 - [x] Dashboard structure
 - [x] Admin panel (basic)
+- [ ] - [x] Admin panel protection (role-based access)
+- [ ] - [x] Custom email domain (noreply@perplexityschool.pl)
 
 ### 🔄 IN PROGRESS
 - [ ] Admin access control & security
@@ -30,8 +32,8 @@ See phases below
 ### 🔴 PRIORITY 1 - Security & Access Control
 
 #### Task #2: Admin Panel Protection
-**Status:** ❌ Not Started  
-**Priority:** CRITICAL ⚡  
+**Status:** ✅ COMPLETE
+**Priority:** CRITICAL ⚡
 **Complexity:** Medium
 
 **Requirements:**
@@ -155,8 +157,7 @@ Once logged in, user cannot return to landing page except via Logout
 ---
 
 #### Task #4: Custom Email Domain
-**Status:** ❌ Not Started  
-**Priority:** Medium (Important for trust)  
+**Status:** ✅ COMPLETED
 **Complexity:** Medium
 
 **Goal:** Emails sent from `noreply@perplexityschool.pl` instead of Supabase default
@@ -544,7 +545,7 @@ Pursue **Option A** first. If rejected, use **Option B**. Avoid direct account r
 
 ## 📋 TASK SUMMARY BY STATUS
 
-### ✅ DONE (6 tasks)
+### ✅ DONE (8 tasks)
 1. i18n implementation (7 languages)
 2. Language switcher (functionality)
 3. Favicon
@@ -553,15 +554,12 @@ Pursue **Option A** first. If rejected, use **Option B**. Avoid direct account r
 6. Admin panel (basic structure)
 
 ### 🔄 IN PROGRESS (0 tasks)
-- (Start with Task #2 - Admin Protection)
 
-### ❌ TODO - CRITICAL (Phase 1) (7 tasks)
-1. **#2** - Admin panel security ⚡
+### ❌ TODO - CRITICAL (Phase 1) (5 tasks)
 2. **#1** - Registration UX
 3. **#8** - Back button navigation
 4. **#7** - Remove home link
 5. **#14** - Flag icons for languages
-6. **#4** - Custom email domain
 7. **#10** - Intro lesson content
 
 ### ❌ TODO - IMPORTANT (Phase 2) (5 tasks)
