@@ -76,7 +76,7 @@ export function ProgressBar() {
 
         {/* Дополнительная информация */}
         <div className="mt-2 text-xs text-gray-400 text-center">
-          {прогресс === 100 ? (
+          {progress === 100 ? (
             <span className="text-cyan-400 font-semibold">🎉 Поздравляем! Вы завершили все уроки!</span>
           ) : progress > 0 ? (
             <span>Продолжайте в том же духе! 🚀</span>
