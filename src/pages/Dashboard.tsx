@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { BookOpen, Gift } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { ProgressBar } from '@/components/ProgressBar';
 
 function DashboardPage() {
   const { profile } = useUser();
@@ -13,6 +14,7 @@ function DashboardPage() {
 
   return (
     <Layout>
+            <ProgressBar />
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold mb-2">
           {t('welcomeUser', { name: profile?.username || profile?.email })}
