@@ -194,5 +194,15 @@
   "adminUsersModalOverallProgress": "Общий прогресс:",
   "adminUsersModalTestAttemptsHistory": "История попыток тестов",
   "adminUsersModalNoAttempts": "Попыток тестов пока нет",
-  "adminUsersModalClose": "Закрыть"
+  "adminUsersModalClose": "Закрыть",
+  "adminUsersFilterByRole": "Фильтр по роли",
+  "adminUsersFilterAll": "Все пользователи",
+  "adminUsersFilterAdminOnly": "Только админы",
+  "adminUsersFilterStudentOnly": "Только студенты",
+  "adminUsersSortBy": "Сортировка",
+  "adminUsersSortByProgress": "По прогрессу (больше → меньше)",
+  "adminUsersSortByAttempts": "По попыткам тестов (меньше → больше)",
+  "adminUsersSortByRole": "По роли (админы сверху)",
+  "adminUsersSortByDate": "По дате регистрации (новые сверху)"
+
 }
