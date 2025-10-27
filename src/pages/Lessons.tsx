@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { withAuth } from '@/lib/withAuth';
 import { Layout } from '@/components/Layout';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,6 +12,7 @@ import { ProgressBar } from '@/components/ProgressBar';
 
 function LessonsPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,6 +33,12 @@ function LessonsPage() {
       console.error('Error loading lessons:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleLessonClick = (lessonId: string, isPublished: boolean) => {
+    if (isPublished) {
+      navigate(`/lessons/${lessonId}`);
     }
   };
 
@@ -59,7 +67,11 @@ function LessonsPage() {
 
         <div className="space-y-4">
           {lessons.map((lesson) => (
-            <Card key={lesson.id} className={!lesson.is_published ? 'opacity-60' : ''}>
+            <Card 
+              key={lesson.id} 
+              className={`${!lesson.is_published ? 'opacity-60' : 'cursor-pointer hover:shadow-lg transition-shadow'}`}
+              onClick={() => handleLessonClick(lesson.id, lesson.is_published)}
+            >
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
