@@ -155,5 +155,6 @@
   "adminUsersTitle": "Users",
   "adminUsersDescription": "User Management",
   "adminPromoCodesTitle": "Promo Codes",
-  "adminPromoCodesDescription": "Promo Code Management"
+  "adminPromoCodesDescription": "Promo Code Management",
+  "newLesson": "New Lesson"
 }
