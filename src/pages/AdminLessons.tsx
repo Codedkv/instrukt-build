@@ -142,8 +142,8 @@ function AdminLessonsPage() {
       supabase.from('lessons').update({ order_index: index }).eq('id', lesson.id)
     )
 
-    await Promise.all(updatePromises.map(query => query)
-                  fetchLessons()
+    await Promise.all(updatePromises)
+    fetchLessons()
   }
 
   return (
