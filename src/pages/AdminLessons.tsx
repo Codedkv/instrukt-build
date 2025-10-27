@@ -126,7 +126,7 @@ function AdminLessonsPage() {
     }
   }
 
-  // Изменение порядка (с исправлением)
+  // Изменение порядка (ИСПРАВЛЕНО)
   const moveLesson = async (id: string, direction: 'up' | 'down') => {
     const currentIndex = lessons.findIndex(l => l.id === id)
     if ((direction === 'up' && currentIndex === 0) || 
@@ -137,13 +137,17 @@ function AdminLessonsPage() {
     const [removed] = lessonsCopy.splice(currentIndex, 1)
     lessonsCopy.splice(newIndex, 0, removed)
 
-    // Обновляем order_index для всех уроков
-    const updatePromises = lessonsCopy.map((lesson, index) =>
-      supabase.from('lessons').update({ order_index: index }).eq('id', lesson.id)
-    )
+    try {
+      // Обновляем order_index для всех уроков с правильным выполнением запросов
+      const updatePromises = lessonsCopy.map((lesson, index) =>
+        supabase.from('lessons').update({ order_index: index }).eq('id', lesson.id).select()
+      )
 
-    await Promise.all(updatePromises)
-    fetchLessons()
+      await Promise.all(updatePromises)
+      await fetchLessons()
+    } catch (error) {
+      toast({ title: t('error'), description: 'Failed to reorder lessons', variant: 'destructive' })
+    }
   }
 
   return (
@@ -226,17 +230,7 @@ function AdminLessonsPage() {
                         </button>
                       </div>
                       <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-xl font-semibold">{lesson.title}</h3>
-                          <span className={`px-2 py-1 rounded text-xs font-medium ${
-                            lesson.status === 'published' ? 'bg-green-100 text-green-800' :
-                            lesson.status === 'archived' ? 'bg-gray-100 text-gray-800' :
-                            'bg-yellow-100 text-yellow-800'
-                          }`}>
-                            {lesson.status === 'published' ? t('published') :
-                             lesson.status === 'archived' ? t('archived') : t('draft')}
-                          </span>
-                        </div>
+                        <h3 className="text-xl font-semibold mb-2">{lesson.title}</h3>
                         {lesson.description && (
                           <p className="text-muted-foreground mb-2">{lesson.description}</p>
                         )}
@@ -244,17 +238,27 @@ function AdminLessonsPage() {
                           <p className="text-sm text-muted-foreground">⏱ {lesson.duration_minutes} {t('minutes')}</p>
                         )}
                       </div>
-                      <div className="flex gap-2">
-                        <Button onClick={() => startEdit(lesson)} size="sm" variant="outline" className="gap-1">
-                          <Edit className="w-4 h-4" /> {t('edit')}
-                        </Button>
-                        <Button onClick={() => toggleStatus(lesson.id, lesson.status)} size="sm" variant="outline" className="gap-1">
-                          {lesson.status === 'published' ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                          {lesson.status === 'published' ? t('hide') : t('publish')}
-                        </Button>
-                        <Button onClick={() => deleteLesson(lesson.id)} size="sm" variant="destructive" className="gap-1">
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                      <div className="flex flex-col gap-2 items-end">
+                        <span className={`px-2 py-1 rounded text-xs font-medium ${
+                          lesson.status === 'published' ? 'bg-green-100 text-green-800' :
+                          lesson.status === 'archived' ? 'bg-gray-100 text-gray-800' :
+                          'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {lesson.status === 'published' ? t('published') :
+                           lesson.status === 'archived' ? t('archived') : t('draft')}
+                        </span>
+                        <div className="flex gap-2">
+                          <Button onClick={() => startEdit(lesson)} size="sm" variant="outline" className="gap-1">
+                            <Edit className="w-4 h-4" /> {t('edit')}
+                          </Button>
+                          <Button onClick={() => toggleStatus(lesson.id, lesson.status)} size="sm" variant="outline" className="gap-1">
+                            {lesson.status === 'published' ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            {lesson.status === 'published' ? t('hide') : t('publish')}
+                          </Button>
+                          <Button onClick={() => deleteLesson(lesson.id)} size="sm" variant="destructive" className="gap-1">
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   )}
