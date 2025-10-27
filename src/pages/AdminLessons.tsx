@@ -53,7 +53,7 @@ function AdminLessonsPage() {
     const { error } = await supabase
       .from('lessons')
       .insert([{
-        title: 'Новый урок',
+        title: t('newLesson'),
         description: '',
         order_index: maxOrder + 1,
         status: 'draft',
@@ -180,8 +180,8 @@ function AdminLessonsPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold mb-2">{t('adminLessons')}</h1>
-            <p className="text-muted-foreground">{t('adminLessonsDesc')}</p>
+            <h1 className="text-4xl font-bold mb-2">{t('adminLessonsPageTitle')}</h1>
+            <p className="text-muted-foreground">{t('adminLessonsPageDesc')}</p>
           </div>
           <Button onClick={createLesson} className="gap-2">
             <Plus className="w-4 h-4" />
@@ -212,89 +212,3 @@ function AdminLessonsPage() {
                         type="text"
                         value={editForm.title}
                         onChange={(e) => setEditForm({...editForm, title: e.target.value})}
-                        className="w-full px-4 py-2 border rounded-md text-lg font-semibold bg-slate-800 text-white border-slate-600"
-                        placeholder={t('lessonTitle')}
-                      />
-                      <textarea
-                        value={editForm.description}
-                        onChange={(e) => setEditForm({...editForm, description: e.target.value})}
-                        className="w-full px-4 py-2 border rounded-md bg-slate-800 text-white border-slate-600"
-                        rows={3}
-                        placeholder={t('lessonDescription')}
-                      />
-                      <div className="flex gap-2 items-center">
-                        <label className="text-sm font-medium">{t('lessonDuration')}</label>
-                        <input
-                          type="number"
-                          value={editForm.duration_minutes}
-                          onChange={(e) => setEditForm({...editForm, duration_minutes: parseInt(e.target.value)})}
-                          className="w-24 px-3 py-1 border rounded-md bg-slate-800 text-white border-slate-600"
-                          min="0"
-                        />
-                      </div>
-                      <div className="flex gap-2">
-                        <Button onClick={saveEdit} size="sm" className="gap-1">
-                          <Save className="w-4 h-4" /> {t('save')}
-                        </Button>
-                        <Button onClick={() => setEditingId(null)} size="sm" variant="outline" className="gap-1">
-                          <X className="w-4 h-4" /> {t('cancel')}
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-start gap-4">
-                      <div className="flex flex-col gap-1">
-                        <button onClick={() => moveLesson(lesson.id, 'up')} disabled={index === 0}
-                          className="p-1 hover:bg-gray-100 rounded disabled:opacity-30">
-                          ▲
-                        </button>
-                        <GripVertical className="w-5 h-5 text-gray-400" />
-                        <button onClick={() => moveLesson(lesson.id, 'down')} disabled={index === lessons.length - 1}
-                          className="p-1 hover:bg-gray-100 rounded disabled:opacity-30">
-                          ▼
-                        </button>
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-semibold mb-2">{lesson.title}</h3>
-                        {lesson.description && (
-                          <p className="text-muted-foreground mb-2">{lesson.description}</p>
-                        )}
-                        {lesson.duration_minutes && (
-                          <p className="text-sm text-muted-foreground">⏱ {lesson.duration_minutes} {t('minutes')}</p>
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-2 items-end">
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${
-                          lesson.status === 'published' ? 'bg-green-100 text-green-800' :
-                          lesson.status === 'archived' ? 'bg-gray-100 text-gray-800' :
-                          'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {lesson.status === 'published' ? t('published') :
-                           lesson.status === 'archived' ? t('archived') : t('draft')}
-                        </span>
-                        <div className="flex gap-2">
-                          <Button onClick={() => startEdit(lesson)} size="sm" variant="outline" className="gap-1">
-                            <Edit className="w-4 h-4" /> {t('edit')}
-                          </Button>
-                          <Button onClick={() => toggleStatus(lesson.id, lesson.status)} size="sm" variant="outline" className="gap-1">
-                            {lesson.status === 'published' ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                            {lesson.status === 'published' ? t('hide') : t('publish')}
-                          </Button>
-                          <Button onClick={() => deleteLesson(lesson.id)} size="sm" variant="destructive" className="gap-1">
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
-    </Layout>
-  )
-}
-
-export default withAuth(AdminLessonsPage, 'admin')
