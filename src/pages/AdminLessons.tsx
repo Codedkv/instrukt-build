@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Plus, GripVertical, Trash2, Edit, Eye, EyeOff, Save, X } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
-  import { useTranslation } from 'react-i18nex''
+  import { useTranslation } from 'react-i18nex'
 
 interface Lesson {
   id: string
