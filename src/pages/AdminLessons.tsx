@@ -57,12 +57,12 @@ function AdminLessonsPage() {
         description: '',
         order_index: maxOrder + 1,
         status: 'draft',
-        duration_minutes: 3
+        duration_minutes: 3,
                 video_url: null,
       }])
 
     if (error) {
-      toast({ title: 'Ошибака'
+      toast({ title: 'Ошибка'
       toast({ title: 'Успешно', description: 'Урок создан' })
       fetchLessons()
     }
