@@ -194,5 +194,15 @@
   "adminUsersModalOverallProgress": "Overall Progress:",
   "adminUsersModalTestAttemptsHistory": "Test Attempts History",
   "adminUsersModalNoAttempts": "No test attempts yet",
-  "adminUsersModalClose": "Close"
+  "adminUsersModalClose": "Close",
+  "adminUsersFilterByRole": "Filter by Role",
+  "adminUsersFilterAll": "All Users",
+  "adminUsersFilterAdminOnly": "Admins Only",
+  "adminUsersFilterStudentOnly": "Students Only",
+  "adminUsersSortBy": "Sort By",
+  "adminUsersSortByProgress": "By Progress (high → low)",
+  "adminUsersSortByAttempts": "By Test Attempts (low → high)",
+  "adminUsersSortByRole": "By Role (admins first)",
+  "adminUsersSortByDate": "By Registration Date (newest first)"
+
 }
