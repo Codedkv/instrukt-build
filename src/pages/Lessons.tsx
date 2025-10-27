@@ -6,8 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import type { Lesson } from '@/types/database';
 import { Clock, CheckCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { ProgressBar } from '@/components/ProgressBar';
 
 function LessonsPage() {
+  const { t } = useTranslation();
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -47,10 +50,11 @@ function LessonsPage() {
 
   return (
     <Layout>
+      <ProgressBar />
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-2">Уроки</h1>
+        <h1 className="text-4xl font-bold mb-2">{t('lessonsTitle')}</h1>
         <p className="text-muted-foreground mb-8">
-          Изучите основы работы с AI и Perplexity
+          {t('lessonsSubtitle')}
         </p>
 
         <div className="space-y-4">
@@ -62,7 +66,7 @@ function LessonsPage() {
                     <CardTitle className="flex items-center gap-2">
                       {lesson.title}
                       {!lesson.is_published && (
-                        <Badge variant="secondary">Скоро</Badge>
+                        <Badge variant="secondary">{t('comingSoon')}</Badge>
                       )}
                     </CardTitle>
                     <CardDescription className="mt-2">
@@ -75,7 +79,7 @@ function LessonsPage() {
                 <CardContent>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Clock className="h-4 w-4" />
-                    {lesson.duration_minutes} минут
+                    {lesson.duration_minutes} {t('minutes')}
                   </div>
                 </CardContent>
               )}
