@@ -181,6 +181,151 @@ export type Database = {
           },
         ]
       }
+      quiz_attempts: {
+        Row: {
+          answers: Json | null
+          completed_at: string | null
+          created_at: string
+          id: string
+          passed: boolean | null
+          quiz_id: string
+          score: number | null
+          started_at: string
+          time_spent: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          answers?: Json | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          passed?: boolean | null
+          quiz_id: string
+          score?: number | null
+          started_at?: string
+          time_spent?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          answers?: Json | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          passed?: boolean | null
+          quiz_id?: string
+          score?: number | null
+          started_at?: string
+          time_spent?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_attempts_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quiz_attempts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_questions: {
+        Row: {
+          correct_answer: Json
+          created_at: string
+          id: string
+          options: Json | null
+          order_index: number
+          points: number
+          question_text: string
+          question_type: string
+          quiz_id: string
+          updated_at: string
+        }
+        Insert: {
+          correct_answer: Json
+          created_at?: string
+          id?: string
+          options?: Json | null
+          order_index?: number
+          points?: number
+          question_text: string
+          question_type: string
+          quiz_id: string
+          updated_at?: string
+        }
+        Update: {
+          correct_answer?: Json
+          created_at?: string
+          id?: string
+          options?: Json | null
+          order_index?: number
+          points?: number
+          question_text?: string
+          question_type?: string
+          quiz_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quizzes: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          lesson_id: string
+          passing_score: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          lesson_id: string
+          passing_score?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          lesson_id?: string
+          passing_score?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quizzes_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
