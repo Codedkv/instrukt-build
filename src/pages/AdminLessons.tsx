@@ -53,7 +53,7 @@ function AdminLessonsPage() {
     const { error } = await supabase
       .from('lessons')
       .insert([{
-        title: t('admin.lessons.newLesson'),
+        title: 'Новый урок',
         description: '',
         order_index: maxOrder + 1,
         status: 'draft',
@@ -64,21 +64,20 @@ function AdminLessonsPage() {
     if (error) {
       toast({ title: t('error'), description: error.message, variant: 'destructive' })
     } else {
-      toast({ title: t('success'), description: t('admin.lessons.lessonCreated') })
+      toast({ title: t('success'), description: t('lessonCreated') })
       fetchLessons()
     }
   }
 
   // Удаление урока
   const deleteLesson = async (id: string) => {
-    if (!confirm(t('admin.lessons.confirmDelete'))) return
-
+    if (!confirm(t('deleteLessonConfirm'))) return
     const { error } = await supabase.from('lessons').delete().eq('id', id)
 
     if (error) {
-      toast({ title: t('admin.lessons.deleteError'), description: error.message, variant: 'destructive' })
+      toast({ title: t('deletionError'), description: error.message, variant: 'destructive' })
     } else {
-      toast({ title: t('success'), description: t('admin.lessons.lessonDeleted') })
+      toast({ title: t('success'), description: t('lessonDeleted') })
       fetchLessons()
     }
   }
@@ -119,15 +118,15 @@ function AdminLessonsPage() {
       .eq('id', editingId)
 
     if (error) {
-      toast({ title: t('admin.lessons.saveError'), description: error.message, variant: 'destructive' })
+      toast({ title: t('saveError'), description: error.message, variant: 'destructive' })
     } else {
-      toast({ title: t('success'), description: t('admin.lessons.changesSaved') })
+      toast({ title: t('success'), description: t('changesSaved') })
       setEditingId(null)
       fetchLessons()
     }
   }
 
-  // Изменение порядка (простая версия)
+  // Изменение порядка (с исправлением)
   const moveLesson = async (id: string, direction: 'up' | 'down') => {
     const currentIndex = lessons.findIndex(l => l.id === id)
     if ((direction === 'up' && currentIndex === 0) || 
@@ -152,12 +151,12 @@ function AdminLessonsPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold mb-2">{t('admin.lessons.title')}</h1>
-            <p className="text-muted-foreground">{t('admin.lessons.subtitle')}</p>
+            <h1 className="text-4xl font-bold mb-2">{t('adminLessons')}</h1>
+            <p className="text-muted-foreground">{t('adminLessonsDesc')}</p>
           </div>
           <Button onClick={createLesson} className="gap-2">
             <Plus className="w-4 h-4" />
-            {t('admin.lessons.addLesson')}
+            {t('addLesson')}
           </Button>
         </div>
 
@@ -166,10 +165,10 @@ function AdminLessonsPage() {
         ) : lessons.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
-              <p className="text-muted-foreground mb-4">{t('admin.lessons.noLessons')}</p>
+              <p className="text-muted-foreground mb-4">{t('noLessonsYet')}</p>
               <Button onClick={createLesson}>
                 <Plus className="w-4 h-4 mr-2" />
-                {t('admin.lessons.createFirst')}
+                {t('createFirstLesson')}
               </Button>
             </CardContent>
           </Card>
@@ -184,32 +183,32 @@ function AdminLessonsPage() {
                         type="text"
                         value={editForm.title}
                         onChange={(e) => setEditForm({...editForm, title: e.target.value})}
-                        className="w-full px-4 py-2 border rounded-md text-lg font-semibold"
-                        placeholder={t('admin.lessons.lessonTitle')}
+                        className="w-full px-4 py-2 border rounded-md text-lg font-semibold bg-slate-800 text-white border-slate-600"
+                        placeholder={t('lessonTitle')}
                       />
                       <textarea
                         value={editForm.description}
                         onChange={(e) => setEditForm({...editForm, description: e.target.value})}
-                        className="w-full px-4 py-2 border rounded-md"
+                        className="w-full px-4 py-2 border rounded-md bg-slate-800 text-white border-slate-600"
                         rows={3}
-                        placeholder={t('admin.lessons.lessonDescription')}
+                        placeholder={t('lessonDescription')}
                       />
                       <div className="flex gap-2 items-center">
-                        <label className="text-sm font-medium">{t('admin.lessons.durationMinutes')}</label>
+                        <label className="text-sm font-medium">{t('lessonDuration')}</label>
                         <input
                           type="number"
                           value={editForm.duration_minutes}
                           onChange={(e) => setEditForm({...editForm, duration_minutes: parseInt(e.target.value)})}
-                          className="w-24 px-3 py-1 border rounded-md"
+                          className="w-24 px-3 py-1 border rounded-md bg-slate-800 text-white border-slate-600"
                           min="0"
                         />
                       </div>
                       <div className="flex gap-2">
                         <Button onClick={saveEdit} size="sm" className="gap-1">
-                          <Save className="w-4 h-4" /> {t('admin.lessons.save')}
+                          <Save className="w-4 h-4" /> {t('save')}
                         </Button>
                         <Button onClick={() => setEditingId(null)} size="sm" variant="outline" className="gap-1">
-                          <X className="w-4 h-4" /> {t('admin.lessons.cancel')}
+                          <X className="w-4 h-4" /> {t('cancel')}
                         </Button>
                       </div>
                     </div>
@@ -234,24 +233,24 @@ function AdminLessonsPage() {
                             lesson.status === 'archived' ? 'bg-gray-100 text-gray-800' :
                             'bg-yellow-100 text-yellow-800'
                           }`}>
-                            {lesson.status === 'published' ? t('admin.lessons.published') :
-                             lesson.status === 'archived' ? t('admin.lessons.archived') : t('admin.lessons.draft')}
+                            {lesson.status === 'published' ? t('published') :
+                             lesson.status === 'archived' ? t('archived') : t('draft')}
                           </span>
                         </div>
                         {lesson.description && (
                           <p className="text-muted-foreground mb-2">{lesson.description}</p>
                         )}
                         {lesson.duration_minutes && (
-                          <p className="text-sm text-muted-foreground">⏱ {lesson.duration_minutes} {t('admin.lessons.minutes')}</p>
+                          <p className="text-sm text-muted-foreground">⏱ {lesson.duration_minutes} {t('minutes')}</p>
                         )}
                       </div>
                       <div className="flex gap-2">
                         <Button onClick={() => startEdit(lesson)} size="sm" variant="outline" className="gap-1">
-                          <Edit className="w-4 h-4" /> {t('admin.lessons.edit')}
+                          <Edit className="w-4 h-4" /> {t('edit')}
                         </Button>
                         <Button onClick={() => toggleStatus(lesson.id, lesson.status)} size="sm" variant="outline" className="gap-1">
                           {lesson.status === 'published' ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                          {lesson.status === 'published' ? t('admin.lessons.hide') : t('admin.lessons.publish')}
+                          {lesson.status === 'published' ? t('hide') : t('publish')}
                         </Button>
                         <Button onClick={() => deleteLesson(lesson.id)} size="sm" variant="destructive" className="gap-1">
                           <Trash2 className="w-4 h-4" />
