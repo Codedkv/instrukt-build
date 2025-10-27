@@ -5,8 +5,8 @@ import { supabase } from '@/integrations/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Plus, GripVertical, Trash2, Edit, Eye, EyeOff, Save, X } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast
-  import { useTranslation } from 'react-i18next''
+import { useToast } from '@/hooks/use-toast'
+  import { useTranslation } from 'react-i18nex''
 
 interface Lesson {
   id: string
@@ -14,8 +14,8 @@ interface Lesson {
   description: string | null
   order_index: number
   status: 'draft' | 'published' | 'archived'
-  duration_minutes: number | nul
-    video_url: string | nulll
+  duration_minutes: number | null
+    video_url: string | null
   created_at: string
 }
 
@@ -23,13 +23,14 @@ function AdminLessonsPage() {
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [editForm, setEditForm] = useState({ title: '', description: '', duration_minutes: 0 , video_url: ''})
-  const { toast } = useToast()
+  const [editForm, setEditForm] = useState({ title: '', description: '', duration_minutes 0 , video_url: ''})
+  const { toast } = useToast(
+      const { t } = useTranslation()
+  )
 
   // Загрузка уроков
   useEffect(() => {
     fetchLessons()
-      const { t } = useTranslation()
   }, [])
 
   const fetchLessons = async () => {
@@ -57,12 +58,12 @@ function AdminLessonsPage() {
         description: '',
         order_index: maxOrder + 1,
         status: 'draft',
-        duration_minutes: 30
+        duration_minutes: 3
+                video_url: nul,0
       }])
 
     if (error) {
-      toast({ title: 'Ошибка создания', description: error.message, variant: 'destructive' })
-    } else {
+      toast({ title: 'Ошибк
       toast({ title: 'Успешно', description: 'Урок создан' })
       fetchLessons()
     }
@@ -103,7 +104,8 @@ function AdminLessonsPage() {
     setEditForm({
       title: lesson.title,
       description: lesson.description || '',
-      duration_minutes: lesson.duration_minutes || 0
+      duration_minutes: lesson.duration_minutes || 
+            video_url: lesson.video_url || ''0
     })
   }
 
