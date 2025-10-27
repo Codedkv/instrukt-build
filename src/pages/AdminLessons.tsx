@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Plus, GripVertical, Trash2, Edit, Eye, EyeOff, Save, X } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
-  import { useTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 
 interface Lesson {
   id: string
@@ -15,7 +15,7 @@ interface Lesson {
   order_index: number
   status: 'draft' | 'published' | 'archived'
   duration_minutes: number | null
-    video_url: string | null
+  video_url: string | null
   created_at: string
 }
 
@@ -25,7 +25,7 @@ function AdminLessonsPage() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState({ title: '', description: '', duration_minutes: 0 , video_url: ''})
   const { toast } = useToast()
-      const { t } = useTranslation()
+  const { t } = useTranslation()
 
   // Загрузка уроков
   useEffect(() => {
@@ -49,8 +49,8 @@ function AdminLessonsPage() {
 
   // Создание нового урока
   const createLesson = async () => {
-    const maxOrder = lessons.length > 0 ? Math.max(...lessons.map(l => l.order_index)) : -1
-    const { error } = await supabase
+  const maxOrder = lessons.length > 0 ? Math.max(...lessons.map(l => l.order_index)) : -1
+  const { error } = await supabase
       .from('lessons')
       .insert([{
         title: 'Новый урок',
@@ -62,7 +62,7 @@ function AdminLessonsPage() {
       }])
 
     if (error) {
-      toast({ title: 'Ошибка'
+      toast({ title: 'Ошибка', description: error.message, variant: 'destructive' })
       toast({ title: 'Успешно', description: 'Урок создан' })
       fetchLessons()
     }
