@@ -11,6 +11,7 @@ import LessonDetail from "./pages/LessonDetail";
 import PerplexityPro from "./pages/PerplexityPro";
 import Admin from "./pages/Admin";
 import AdminLessons from "./pages/AdminLessons";
+import AdminUsers from "./pages/AdminUsers";
 import UserLessons from './pages/UserLessons';
 import NotFound from "./pages/NotFound";
 
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/my-lessons" element={<UserLessons />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/admin/lessons" element={<AdminLessons />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
