@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useUser } from '@/contexts/UserContext'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/integrations/supabase/client'
 
 export function ProgressBar() {
   const { user } = useUser()
