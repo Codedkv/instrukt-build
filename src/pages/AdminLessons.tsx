@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { withAuth } from '@/lib/withAuth'
 import { Layout } from '@/components/Layout'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/integrations/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Plus, GripVertical, Trash2, Edit, Eye, EyeOff, Save, X } from 'lucide-react'
