@@ -186,5 +186,13 @@
   "adminUsersDetailsTestFailed": "Не пройден",
   "adminUsersDetailsTestDate": "Дата:",
   "adminUsersDetailsTestTime": "Время:",
-  "adminUsersDetailsClose": "Закрыть"
+  "adminUsersDetailsClose": "Закрыть",
+  "adminUsersModalTitle": "Детали пользователя",
+  "adminUsersModalEmail": "Email:",
+  "adminUsersModalUsername": "Username:",
+  "adminUsersModalRole": "Роль:",
+  "adminUsersModalOverallProgress": "Общий прогресс:",
+  "adminUsersModalTestAttemptsHistory": "История попыток тестов",
+  "adminUsersModalNoAttempts": "Попыток тестов пока нет",
+  "adminUsersModalClose": "Закрыть"
 }
