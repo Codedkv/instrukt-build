@@ -54,10 +54,9 @@ interface UserDetailsData {
   role: 'admin' | 'student'
   averageProgress: number
   attempts: QuizAttemptDetail[]
-  type RoleFilter = 'all' | 'admin' | 'student'
-  type SortOption = 'progress' | 'attempts' | 'role' | 'date'
-
 }
+type RoleFilter = 'all' | 'admin' | 'student'
+type SortOption = 'progress' | 'attempts' | 'role' | 'date'
 
 const AdminUsers = () => {
   const { t } = useTranslation()
