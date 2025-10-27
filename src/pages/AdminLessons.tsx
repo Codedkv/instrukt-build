@@ -138,12 +138,12 @@ function AdminLessonsPage() {
     lessonsCopy.splice(newIndex, 0, removed)
 
     // Обновляем order_index для всех уроков
-    const updates = lessonsCopy.map((lesson, index) => 
+    const updatePromises = lessonsCopy.map((lesson, index) =>
       supabase.from('lessons').update({ order_index: index }).eq('id', lesson.id)
     )
 
-    await Promise.all(updates)
-    fetchLessons()
+    await Promise.all(updatePromises.map(query => query)
+                  fetchLessons()
   }
 
   return (
