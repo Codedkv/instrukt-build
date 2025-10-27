@@ -14,6 +14,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Shield, User, Eye, Search } from 'lucide-react'
 
 interface UserData {
@@ -23,6 +30,7 @@ interface UserData {
   role: 'admin' | 'student'
   averageProgress: number
   testAttempts: number
+  createdAt: string
 }
 
 interface QuizAttemptDetail {
@@ -46,6 +54,9 @@ interface UserDetailsData {
   role: 'admin' | 'student'
   averageProgress: number
   attempts: QuizAttemptDetail[]
+  type RoleFilter = 'all' | 'admin' | 'student'
+  type SortOption = 'progress' | 'attempts' | 'role' | 'date'
+
 }
 
 const AdminUsers = () => {
@@ -55,27 +66,60 @@ const AdminUsers = () => {
   const [filteredUsers, setFilteredUsers] = useState<UserData[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [roleFilter, setRoleFilter] = useState<RoleFilter>('all')
+  const [sortBy, setSortBy] = useState<SortOption>('date')
   const [selectedUser, setSelectedUser] = useState<UserDetailsData | null>(null)
   const [detailsModalOpen, setDetailsModalOpen] = useState(false)
 
-  useEffect(() => {
+    useEffect(() => {
     fetchUsers()
   }, [])
 
   useEffect(() => {
-    if (searchQuery.trim() === '') {
-      setFilteredUsers(users)
-    } else {
+    applyFiltersAndSort()
+  }, [searchQuery, roleFilter, sortBy, users])
+
+  const applyFiltersAndSort = () => {
+    let result = [...users]
+
+    // Фильтр по поиску
+    if (searchQuery.trim() !== '') {
       const query = searchQuery.toLowerCase()
-      setFilteredUsers(
-        users.filter(
-          (user) =>
-            user.email.toLowerCase().includes(query) ||
-            user.username.toLowerCase().includes(query)
-        )
+      result = result.filter(
+        (user) =>
+          user.email.toLowerCase().includes(query) ||
+          user.username.toLowerCase().includes(query)
       )
     }
-  }, [searchQuery, users])
+
+    // Фильтр по роли
+    if (roleFilter !== 'all') {
+      result = result.filter((user) => user.role === roleFilter)
+    }
+
+    // Сортировка
+    switch (sortBy) {
+      case 'progress':
+        result.sort((a, b) => b.averageProgress - a.averageProgress)
+        break
+      case 'attempts':
+        result.sort((a, b) => a.testAttempts - b.testAttempts)
+        break
+      case 'role':
+        result.sort((a, b) => {
+          if (a.role === 'admin' && b.role === 'student') return -1
+          if (a.role === 'student' && b.role === 'admin') return 1
+          return 0
+        })
+        break
+      case 'date':
+        result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        break
+    }
+
+    setFilteredUsers(result)
+  }
+
 
   const fetchUsers = async () => {
     try {
@@ -88,6 +132,7 @@ const AdminUsers = () => {
           id,
           email,
           username,
+          created_at,
           user_roles (
             role
           )
@@ -139,6 +184,7 @@ const AdminUsers = () => {
           role,
           averageProgress,
           testAttempts,
+          createdAt: profile.created_at,
         }
       })
 
@@ -304,9 +350,9 @@ const AdminUsers = () => {
               <h1 className="text-3xl font-bold">{t('adminUsersPageTitle')}</h1>
             </div>
 
-            {/* Поиск */}
-            <div className="mb-6">
-              <div className="relative">
+                        {/* Поиск, фильтр и сортировка */}
+            <div className="mb-6 flex flex-col md:flex-row gap-4">
+              <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
                   type="text"
@@ -316,7 +362,33 @@ const AdminUsers = () => {
                   className="pl-10"
                 />
               </div>
+
+              <div className="flex gap-4">
+                <Select value={roleFilter} onValueChange={(value) => setRoleFilter(value as RoleFilter)}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder={t('adminUsersFilterByRole')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('adminUsersFilterAll')}</SelectItem>
+                    <SelectItem value="admin">{t('adminUsersFilterAdminOnly')}</SelectItem>
+                    <SelectItem value="student">{t('adminUsersFilterStudentOnly')}</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder={t('adminUsersSortBy')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="progress">{t('adminUsersSortByProgress')}</SelectItem>
+                    <SelectItem value="attempts">{t('adminUsersSortByAttempts')}</SelectItem>
+                    <SelectItem value="role">{t('adminUsersSortByRole')}</SelectItem>
+                    <SelectItem value="date">{t('adminUsersSortByDate')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+
 
             {loading ? (
               <div className="text-center py-8 text-muted-foreground">
