@@ -74,14 +74,20 @@ function UserLessonsPage() {
     }
   };
 
-  const isLessonUnlocked = (index: number): boolean => {
-    if (index === 0) return true; // Первый урок всегда открыт
+  const isLessonUnlocked = (lessonId: string, index: number): boolean => {
+    // Первый урок всегда открыт
+    if (index === 0) return true;
+    
+    // Если урок уже был начат (есть прогресс), он остаётся доступным
+    if (progress[lessonId]) return true;
+    
+    // Иначе проверяем, завершён ли предыдущий урок
     const previousLesson = lessons[index - 1];
-    return progress[previousLesson.id]?.completed === true;
+    return progress[previousLesson?.id]?.completed === true;
   };
 
   const handleLessonClick = (lessonId: string, index: number) => {
-    if (isLessonUnlocked(index)) {
+    if (isLessonUnlocked(lessonId, index)) {
       navigate(`/lessons/${lessonId}`);
     }
   };
@@ -125,7 +131,7 @@ function UserLessonsPage() {
               const lessonProgress = progress[lesson.id];
               const isCompleted = lessonProgress?.completed || false;
               const progressPercentage = lessonProgress?.progress_percentage || 0;
-              const isUnlocked = isLessonUnlocked(index);
+              const isUnlocked = isLessonUnlocked(lesson.id, index);
 
               return (
                 <Card 
