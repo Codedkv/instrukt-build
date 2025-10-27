@@ -143,5 +143,17 @@
   "lessonTranscription": "Transcription",
   "lessonTest": "Knowledge test",
   "lessonTestDescription": "Pass the test with 95% correct answers to unlock the next lesson",
-  "testComingSoon": "Test coming soon"
+  "testComingSoon": "Test coming soon",
+  "myLessonsDescription": "Track your learning progress and complete lessons",
+  "loadingLessons": "Loading lessons...",
+  "noLessonsAvailable": "No lessons available yet. Check back later!",
+  "progress": "Progress",
+  "completePreviousLesson": "Complete the previous lesson to unlock",
+  "adminPanelTitle": "Admin Panel",
+  "adminLessonsTitle": "Lessons",
+  "adminLessonsDescription": "Lesson Management",
+  "adminUsersTitle": "Users",
+  "adminUsersDescription": "User Management",
+  "adminPromoCodesTitle": "Promo Codes",
+  "adminPromoCodesDescription": "Promo Code Management"
 }
