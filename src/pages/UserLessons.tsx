@@ -70,6 +70,10 @@ function UserLessonsPage() {
     }
   };
 
+  const handleLessonClick = (lessonId: string) => {
+    navigate(`/lessons/${lessonId}`);
+  };
+
   const markAsComplete = async (lessonId: string) => {
     if (!user) return;
 
@@ -126,6 +130,14 @@ function UserLessonsPage() {
     }
   };
 
+  const handleToggleComplete = (lessonId: string, completed: boolean) => {
+    if (completed) {
+      markAsIncomplete(lessonId);
+    } else {
+      markAsComplete(lessonId);
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -162,7 +174,11 @@ function UserLessonsPage() {
               const progressPercentage = lessonProgress?.progress_percentage || 0;
 
               return (
-                <Card key={lesson.id} className={isCompleted ? 'border-green-500' : ''}>
+                <Card 
+                  key={lesson.id} 
+                  className={`cursor-pointer hover:shadow-lg transition-shadow ${isCompleted ? 'border-green-500' : ''}`}
+                  onClick={() => handleLessonClick(lesson.id)}
+                >
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -201,14 +217,20 @@ function UserLessonsPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => markAsIncomplete(lesson.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleComplete(lesson.id, true);
+                            }}
                           >
                             Mark as Incomplete
                           </Button>
                         ) : (
                           <Button
                             size="sm"
-                            onClick={() => markAsComplete(lesson.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleComplete(lesson.id, false);
+                            }}
                           >
                             Mark as Complete
                           </Button>
