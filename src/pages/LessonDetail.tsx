@@ -41,7 +41,7 @@ function LessonDetailPage() {
   };
 
   const handleBackToLessons = () => {
-    navigate('/lessons');
+    navigate('/my-lessons');  // ✅ ПРАВИЛЬНЫЙ URL
   };
 
   if (loading) {
