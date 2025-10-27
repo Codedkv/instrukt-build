@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Plus, GripVertical, Trash2, Edit, Eye, EyeOff, Save, X } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
-  import { useTranslation } from 'react-i18nex'
+  import { useTranslation } from 'react-i18next'
 
 interface Lesson {
   id: string
@@ -23,10 +23,9 @@ function AdminLessonsPage() {
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [editForm, setEditForm] = useState({ title: '', description: '', duration_minutes 0 , video_url: ''})
-  const { toast } = useToast(
+  const [editForm, setEditForm] = useState({ title: '', description: '', duration_minutes: 0 , video_url: ''})
+  const { toast } = useToast()
       const { t } = useTranslation()
-  )
 
   // Загрузка уроков
   useEffect(() => {
@@ -59,11 +58,11 @@ function AdminLessonsPage() {
         order_index: maxOrder + 1,
         status: 'draft',
         duration_minutes: 3
-                video_url: nul,0
+                video_url: null,
       }])
 
     if (error) {
-      toast({ title: 'Ошибк
+      toast({ title: 'Ошибака'
       toast({ title: 'Успешно', description: 'Урок создан' })
       fetchLessons()
     }
@@ -76,7 +75,7 @@ function AdminLessonsPage() {
     const { error } = await supabase.from('lessons').delete().eq('id', id)
 
     if (error) {
-      toast({ title: 'Ошибка удаления', description: error.message, variant: 'destructive' })
+      toast({ title: 'Ошибка'а удаления', description: error.message, variant: 'destructive' })
     } else {
       toast({ title: 'Успешно', description: 'Урок удалён' })
       fetchLessons()
@@ -92,7 +91,7 @@ function AdminLessonsPage() {
       .eq('id', id)
 
     if (error) {
-      toast({ title: 'Ошибка', description: error.message, variant: 'destructive' })
+      toast({ title: 'Ошибка'а', description: error.message, variant: 'destructive' })
     } else {
       fetchLessons()
     }
@@ -104,8 +103,8 @@ function AdminLessonsPage() {
     setEditForm({
       title: lesson.title,
       description: lesson.description || '',
-      duration_minutes: lesson.duration_minutes || 
-            video_url: lesson.video_url || ''0
+      duration_minutes: lesson.duration_minutes | 0| ,
+            video_url: lesson.video_url || ''
     })
   }
 
