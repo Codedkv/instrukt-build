@@ -155,5 +155,6 @@
   "adminUsersTitle": "Пользователи",
   "adminUsersDescription": "Управление пользователями",
   "adminPromoCodesTitle": "Промокоды",
-  "adminPromoCodesDescription": "Управление промокодами"
+  "adminPromoCodesDescription": "Управление промокодами",
+  "newLesson": "Новый урок"
 }
