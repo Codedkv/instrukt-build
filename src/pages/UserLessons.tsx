@@ -3,9 +3,10 @@ import { useUser } from '@/contexts/UserContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { CheckCircle2, Circle, Clock, BookOpen } from 'lucide-react';
+import { Clock, BookOpen, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { ProgressBar } from '@/components/ProgressBar';
 
 interface Lesson {
   id: string;
@@ -26,13 +27,16 @@ interface Progress {
 function UserLessonsPage() {
   const { user } = useUser();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [progress, setProgress] = useState<Record<string, Progress>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchLessons();
-  }, []);
+    if (user) {
+      fetchLessons();
+    }
+  }, [user]);
 
   const fetchLessons = async () => {
     try {
@@ -70,71 +74,15 @@ function UserLessonsPage() {
     }
   };
 
-  const handleLessonClick = (lessonId: string) => {
-    navigate(`/lessons/${lessonId}`);
+  const isLessonUnlocked = (index: number): boolean => {
+    if (index === 0) return true; // Первый урок всегда открыт
+    const previousLesson = lessons[index - 1];
+    return progress[previousLesson.id]?.completed === true;
   };
 
-  const markAsComplete = async (lessonId: string) => {
-    if (!user) return;
-
-    try {
-      const { error } = await supabase.rpc('upsert_lesson_progress', {
-        p_user_id: user.id,
-        p_lesson_id: lessonId,
-        p_progress_percentage: 100,
-        p_completed: true
-      });
-
-      if (error) throw error;
-
-      // Update local state
-      setProgress({
-        ...progress,
-        [lessonId]: {
-          lesson_id: lessonId,
-          progress_percentage: 100,
-          completed: true,
-          last_accessed: new Date().toISOString()
-        }
-      });
-    } catch (error) {
-      console.error('Error updating progress:', error);
-    }
-  };
-
-  const markAsIncomplete = async (lessonId: string) => {
-    if (!user) return;
-
-    try {
-      const { error } = await supabase.rpc('upsert_lesson_progress', {
-        p_user_id: user.id,
-        p_lesson_id: lessonId,
-        p_progress_percentage: 0,
-        p_completed: false
-      });
-
-      if (error) throw error;
-
-      // Update local state
-      setProgress({
-        ...progress,
-        [lessonId]: {
-          lesson_id: lessonId,
-          progress_percentage: 0,
-          completed: false,
-          last_accessed: new Date().toISOString()
-        }
-      });
-    } catch (error) {
-      console.error('Error updating progress:', error);
-    }
-  };
-
-  const handleToggleComplete = (lessonId: string, completed: boolean) => {
-    if (completed) {
-      markAsIncomplete(lessonId);
-    } else {
-      markAsComplete(lessonId);
+  const handleLessonClick = (lessonId: string, index: number) => {
+    if (isLessonUnlocked(index)) {
+      navigate(`/lessons/${lessonId}`);
     }
   };
 
@@ -142,7 +90,7 @@ function UserLessonsPage() {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-8">
-          <p className="text-center">Loading lessons...</p>
+          <p className="text-center">{t('loadingLessons')}</p>
         </div>
       </Layout>
     );
@@ -152,32 +100,42 @@ function UserLessonsPage() {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">My Lessons</h1>
+          <h1 className="text-4xl font-bold mb-2">{t('myLessons')}</h1>
           <p className="text-muted-foreground">
-            Track your learning progress and complete lessons
+            {t('myLessonsDescription')}
           </p>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="mb-8">
+          <ProgressBar />
         </div>
 
         {lessons.length === 0 ? (
           <Card>
             <CardContent className="pt-6">
               <p className="text-center text-muted-foreground">
-                No lessons available yet. Check back soon!
+                {t('noLessonsAvailable')}
               </p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid gap-4">
-            {lessons.map((lesson) => {
+            {lessons.map((lesson, index) => {
               const lessonProgress = progress[lesson.id];
               const isCompleted = lessonProgress?.completed || false;
               const progressPercentage = lessonProgress?.progress_percentage || 0;
+              const isUnlocked = isLessonUnlocked(index);
 
               return (
                 <Card 
                   key={lesson.id} 
-                  className={`cursor-pointer hover:shadow-lg transition-shadow ${isCompleted ? 'border-green-500' : ''}`}
-                  onClick={() => handleLessonClick(lesson.id)}
+                  className={`transition-shadow ${
+                    isUnlocked 
+                      ? 'cursor-pointer hover:shadow-lg' 
+                      : 'cursor-not-allowed opacity-60'
+                  } ${isCompleted ? 'border-green-500' : ''}`}
+                  onClick={() => handleLessonClick(lesson.id, index)}
                 >
                   <CardHeader>
                     <div className="flex items-start justify-between">
@@ -185,57 +143,44 @@ function UserLessonsPage() {
                         <CardTitle className="flex items-center gap-2">
                           <BookOpen className="h-5 w-5" />
                           {lesson.title}
+                          {!isUnlocked && (
+                            <Lock className="h-4 w-4 text-muted-foreground" />
+                          )}
                         </CardTitle>
                         {lesson.description && (
                           <CardDescription className="mt-2">
                             {lesson.description}
                           </CardDescription>
                         )}
+                        {!isUnlocked && (
+                          <p className="text-sm text-muted-foreground mt-2">
+                            {t('completePreviousLesson')}
+                          </p>
+                        )}
                       </div>
-                      {isCompleted ? (
-                        <CheckCircle2 className="h-6 w-6 text-green-500" />
-                      ) : (
-                        <Circle className="h-6 w-6 text-gray-300" />
-                      )}
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        {lesson.duration_minutes && (
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-4 w-4" />
-                            <span>{lesson.duration_minutes} min</span>
-                          </div>
-                        )}
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      {lesson.duration_minutes && (
                         <div className="flex items-center gap-1">
-                          <span>Progress: {progressPercentage}%</span>
+                          <Clock className="h-4 w-4" />
+                          <span>{lesson.duration_minutes} {t('minutes')}</span>
                         </div>
+                      )}
+                      <div className="flex items-center gap-1">
+                        <span>{t('progress')}: {progressPercentage}%</span>
                       </div>
-                      <div className="flex gap-2">
-                        {isCompleted ? (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleToggleComplete(lesson.id, true);
-                            }}
-                          >
-                            Mark as Incomplete
-                          </Button>
-                        ) : (
-                          <Button
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleToggleComplete(lesson.id, false);
-                            }}
-                          >
-                            Mark as Complete
-                          </Button>
-                        )}
-                      </div>
+                      {isCompleted && (
+                        <div className="flex items-center gap-1 text-green-500">
+                          <span>✓ {t('completed')}</span>
+                        </div>
+                      )}
+                      {!isUnlocked && (
+                        <div className="flex items-center gap-1">
+                          <span>🔒 {t('locked')}</span>
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
