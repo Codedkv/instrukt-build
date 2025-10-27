@@ -5,7 +5,8 @@ import { supabase } from '@/integrations/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Plus, GripVertical, Trash2, Edit, Eye, EyeOff, Save, X } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/hooks/use-toast
+  import { useTranslation } from 'react-i18next''
 
 interface Lesson {
   id: string
@@ -13,7 +14,8 @@ interface Lesson {
   description: string | null
   order_index: number
   status: 'draft' | 'published' | 'archived'
-  duration_minutes: number | null
+  duration_minutes: number | nul
+    video_url: string | nulll
   created_at: string
 }
 
@@ -21,12 +23,13 @@ function AdminLessonsPage() {
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [editForm, setEditForm] = useState({ title: '', description: '', duration_minutes: 0 })
+  const [editForm, setEditForm] = useState({ title: '', description: '', duration_minutes: 0 , video_url: ''})
   const { toast } = useToast()
 
   // Загрузка уроков
   useEffect(() => {
     fetchLessons()
+      const { t } = useTranslation()
   }, [])
 
   const fetchLessons = async () => {
