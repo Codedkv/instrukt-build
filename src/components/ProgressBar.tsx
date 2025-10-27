@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useUser } from '@/contexts/UserContext'
 import { supabase } from '@/integrations/supabase/client'
+import { useTranslation } from 'react-i18next'
 
 export function ProgressBar() {
   const { user } = useUser()
+  const { t } = useTranslation()
   const [progress, setProgress] = useState(0)
   const [loading, setLoading] = useState(true)
 
@@ -35,7 +37,7 @@ export function ProgressBar() {
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-cyan-300">
-            Прогресс обучения
+            {t('learningProgress')}
           </span>
           <span className="text-lg font-bold text-cyan-400">
             {progress}%
@@ -77,11 +79,11 @@ export function ProgressBar() {
         {/* Дополнительная информация */}
         <div className="mt-2 text-xs text-gray-400 text-center">
           {progress === 100 ? (
-            <span className="text-cyan-400 font-semibold">🎉 Поздравляем! Вы завершили все уроки!</span>
+            <span className="text-cyan-400 font-semibold">{t('progressComplete')}</span>
           ) : progress > 0 ? (
-            <span>Продолжайте в том же духе! 🚀</span>
+            <span>{t('keepGoing')}</span>
           ) : (
-            <span>Начните свой путь обучения! 🎓</span>
+            <span>{t('startLearning')}</span>
           )}
         </div>
       </div>
