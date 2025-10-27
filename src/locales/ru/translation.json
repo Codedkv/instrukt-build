@@ -148,5 +148,12 @@
   "loadingLessons": "Загрузка уроков...",
   "noLessonsAvailable": "Уроков пока нет. Заходите позже!",
   "progress": "Прогресс",
-  "completePreviousLesson": "Завершите предыдущий урок для разблокировки"
+  "completePreviousLesson": "Завершите предыдущий урок для разблокировки",
+  "adminPanelTitle": "Админ-панель",
+  "adminLessonsTitle": "Уроки",
+  "adminLessonsDescription": "Управление уроками",
+  "adminUsersTitle": "Пользователи",
+  "adminUsersDescription": "Управление пользователями",
+  "adminPromoCodesTitle": "Промокоды",
+  "adminPromoCodesDescription": "Управление промокодами"
 }
