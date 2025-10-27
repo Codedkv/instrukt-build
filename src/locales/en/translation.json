@@ -107,7 +107,7 @@
   "success": "Success",
   "error": "Error",
   "warning": "Warning",
-  "info": "Information,
+  "info": "Information",
     "adminLessons": "Lessons Management",
     "adminLessonsDesc": "Create, edit and organize lessons",
     "addLesson": "Add lesson",
@@ -131,5 +131,5 @@
     "creationError": "Creation error",
     "deletionError": "Deletion error",
     "saveError": "Save error",
-    "minutes": "minutes""
+    "minutes": "minutes"
 }
