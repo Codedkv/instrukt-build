@@ -186,5 +186,13 @@
   "adminUsersDetailsTestFailed": "Failed",
   "adminUsersDetailsTestDate": "Date:",
   "adminUsersDetailsTestTime": "Time:",
-  "adminUsersDetailsClose": "Close"
+  "adminUsersDetailsClose": "Close",
+  "adminUsersModalTitle": "User Details",
+  "adminUsersModalEmail": "Email:",
+  "adminUsersModalUsername": "Username:",
+  "adminUsersModalRole": "Role:",
+  "adminUsersModalOverallProgress": "Overall Progress:",
+  "adminUsersModalTestAttemptsHistory": "Test Attempts History",
+  "adminUsersModalNoAttempts": "No test attempts yet",
+  "adminUsersModalClose": "Close"
 }
