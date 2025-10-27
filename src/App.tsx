@@ -7,7 +7,6 @@ import { UserProvider } from "@/contexts/UserContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
-import Lessons from "./pages/Lessons";
 import LessonDetail from "./pages/LessonDetail";
 import PerplexityPro from "./pages/PerplexityPro";
 import Admin from "./pages/Admin";
@@ -29,7 +28,6 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/perplexity-pro" element={<PerplexityPro />} />
-            <Route path="/lessons" element={<Lessons />} />
             <Route path="/lessons/:lessonId" element={<LessonDetail />} />
             <Route path="/my-lessons" element={<UserLessons />} />
             <Route path="/admin" element={<Admin />} />
