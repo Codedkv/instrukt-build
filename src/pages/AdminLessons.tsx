@@ -126,26 +126,51 @@ function AdminLessonsPage() {
     }
   }
 
-  // Изменение порядка (ИСПРАВЛЕНО)
+  // НОВЫЙ ПОДХОД: Изменение порядка двух уроков
   const moveLesson = async (id: string, direction: 'up' | 'down') => {
     const currentIndex = lessons.findIndex(l => l.id === id)
     if ((direction === 'up' && currentIndex === 0) || 
         (direction === 'down' && currentIndex === lessons.length - 1)) return
 
     const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
-    const lessonsCopy = [...lessons]
-    const [removed] = lessonsCopy.splice(currentIndex, 1)
-    lessonsCopy.splice(newIndex, 0, removed)
+    
+    // Получаем два урока, которые меняются местами
+    const currentLesson = lessons[currentIndex]
+    const swapLesson = lessons[newIndex]
+
+    // Оптимистичное обновление UI
+    const updatedLessons = [...lessons]
+    updatedLessons[currentIndex] = { ...swapLesson, order_index: currentLesson.order_index }
+    updatedLessons[newIndex] = { ...currentLesson, order_index: swapLesson.order_index }
+    setLessons(updatedLessons)
 
     try {
-      // Обновляем order_index для всех уроков с правильным выполнением запросов
-      const updatePromises = lessonsCopy.map((lesson, index) =>
-        supabase.from('lessons').update({ order_index: index }).eq('id', lesson.id).select()
-      )
+      // Обновляем только два урока в базе данных
+      const { error: error1 } = await supabase
+        .from('lessons')
+        .update({ order_index: swapLesson.order_index })
+        .eq('id', currentLesson.id)
 
-      await Promise.all(updatePromises)
-      await fetchLessons()
+      const { error: error2 } = await supabase
+        .from('lessons')
+        .update({ order_index: currentLesson.order_index })
+        .eq('id', swapLesson.id)
+
+      if (error1 || error2) {
+        // Откатываем изменения в UI при ошибке
+        setLessons(lessons)
+        toast({ 
+          title: t('error'), 
+          description: error1?.message || error2?.message, 
+          variant: 'destructive' 
+        })
+      } else {
+        // Перезагружаем данные для синхронизации
+        await fetchLessons()
+      }
     } catch (error) {
+      // Откатываем при любой ошибке
+      setLessons(lessons)
       toast({ title: t('error'), description: 'Failed to reorder lessons', variant: 'destructive' })
     }
   }
