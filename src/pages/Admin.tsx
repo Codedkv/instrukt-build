@@ -11,7 +11,7 @@ function AdminPage() {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-8">{t('admin.title')}</h1>
+        <h1 className="text-4xl font-bold mb-8">{t('adminPanelTitle')}</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Link to="/admin/lessons" className="transition hover:scale-105">
@@ -19,9 +19,9 @@ function AdminPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <BookOpen className="h-5 w-5 text-primary" />
-                  {t('admin.lessons.title')}
+                  {t('adminLessonsTitle')}
                 </CardTitle>
-                <CardDescription>{t('admin.lessons.description')}</CardDescription>
+                <CardDescription>{t('adminLessonsDescription')}</CardDescription>
               </CardHeader>
             </Card>
           </Link>
@@ -31,9 +31,9 @@ function AdminPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Users className="h-5 w-5 text-primary" />
-                  {t('admin.users.title')}
+                  {t('adminUsersTitle')}
                 </CardTitle>
-                <CardDescription>{t('admin.users.description')}</CardDescription>
+                <CardDescription>{t('adminUsersDescription')}</CardDescription>
               </CardHeader>
             </Card>
           </Link>
@@ -43,9 +43,9 @@ function AdminPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Gift className="h-5 w-5 text-primary" />
-                  {t('admin.promoCodes.title')}
+                  {t('adminPromoCodesTitle')}
                 </CardTitle>
-                <CardDescription>{t('admin.promoCodes.description')}</CardDescription>
+                <CardDescription>{t('adminPromoCodesDescription')}</CardDescription>
               </CardHeader>
             </Card>
           </Link>
