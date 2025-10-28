@@ -7,6 +7,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Plus, GripVertical, Trash2, Edit, Eye, EyeOff, Save, X } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { useTranslation } from 'react-i18next'
+import { VideoUrlInput } from '@/components/VideoUrlInput'
+import { VideoMetadata } from '@/types/quiz'
 
 interface Lesson {
   id: string
@@ -16,6 +18,8 @@ interface Lesson {
   status: 'draft' | 'published' | 'archived'
   duration_minutes: number | null
   video_url: string | null
+  video_type: string | null
+  video_thumbnail: string | null
   created_at: string
 }
 
@@ -23,7 +27,13 @@ function AdminLessonsPage() {
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [editForm, setEditForm] = useState({ title: '', description: '', duration_minutes: 0, video_url: '' })
+  const [editForm, setEditForm] = useState({ 
+    title: '', 
+    description: '', 
+    duration_minutes: 0, 
+    video_url: '' 
+  })
+  const [videoMetadata, setVideoMetadata] = useState<VideoMetadata | null>(null)
   const { toast } = useToast()
   const { t } = useTranslation()
 
@@ -57,6 +67,8 @@ function AdminLessonsPage() {
         status: 'draft',
         duration_minutes: 3,
         video_url: null,
+        video_type: null,
+        video_thumbnail: null,
       }])
 
     if (error) {
@@ -69,6 +81,7 @@ function AdminLessonsPage() {
 
   const deleteLesson = async (id: string) => {
     if (!confirm(t('deleteLessonConfirm'))) return
+
     const { error } = await supabase.from('lessons').delete().eq('id', id)
 
     if (error) {
@@ -101,14 +114,32 @@ function AdminLessonsPage() {
       duration_minutes: lesson.duration_minutes || 0,
       video_url: lesson.video_url || ''
     })
+    
+    // Initialize video metadata if exists
+    if (lesson.video_url) {
+      setVideoMetadata({
+        url: lesson.video_url,
+        type: (lesson.video_type as VideoMetadata['type']) || 'direct',
+        thumbnail: lesson.video_thumbnail || undefined,
+      })
+    } else {
+      setVideoMetadata(null)
+    }
   }
 
   const saveEdit = async () => {
     if (!editingId) return
 
+    const updateData = {
+      ...editForm,
+      video_url: videoMetadata?.url || null,
+      video_type: videoMetadata?.type || null,
+      video_thumbnail: videoMetadata?.thumbnail || null,
+    }
+
     const { error } = await supabase
       .from('lessons')
-      .update(editForm)
+      .update(updateData)
       .eq('id', editingId)
 
     if (error) {
@@ -116,8 +147,14 @@ function AdminLessonsPage() {
     } else {
       toast({ title: t('success'), description: t('changesSaved') })
       setEditingId(null)
+      setVideoMetadata(null)
       fetchLessons()
     }
+  }
+
+  const cancelEdit = () => {
+    setEditingId(null)
+    setVideoMetadata(null)
   }
 
   const moveLesson = async (id: string, direction: 'up' | 'down') => {
@@ -133,6 +170,7 @@ function AdminLessonsPage() {
     const updatedLessons = [...lessons]
     updatedLessons[currentIndex] = { ...swapLesson, order_index: currentLesson.order_index }
     updatedLessons[newIndex] = { ...currentLesson, order_index: swapLesson.order_index }
+
     setLessons(updatedLessons)
 
     try {
@@ -219,11 +257,21 @@ function AdminLessonsPage() {
                           min="0"
                         />
                       </div>
-                      <div className="flex gap-2">
+
+                      {/* Video URL Input */}
+                      <div className="border-t pt-4">
+                        <h4 className="text-sm font-medium mb-3">{t('videoUpload')}</h4>
+                        <VideoUrlInput
+                          value={videoMetadata}
+                          onChange={setVideoMetadata}
+                        />
+                      </div>
+
+                      <div className="flex gap-2 pt-2 border-t">
                         <Button onClick={saveEdit} size="sm" className="gap-1">
                           <Save className="w-4 h-4" /> {t('save')}
                         </Button>
-                        <Button onClick={() => setEditingId(null)} size="sm" variant="outline" className="gap-1">
+                        <Button onClick={cancelEdit} size="sm" variant="outline" className="gap-1">
                           <X className="w-4 h-4" /> {t('cancel')}
                         </Button>
                       </div>
@@ -241,15 +289,22 @@ function AdminLessonsPage() {
                           ▼
                         </button>
                       </div>
+
                       <div className="flex-1">
                         <h3 className="text-xl font-semibold mb-2">{lesson.title}</h3>
                         {lesson.description && (
                           <p className="text-muted-foreground mb-2">{lesson.description}</p>
                         )}
-                        {lesson.duration_minutes && (
-                          <p className="text-sm text-muted-foreground">⏱ {lesson.duration_minutes} {t('minutes')}</p>
-                        )}
+                        <div className="flex gap-4 text-sm text-muted-foreground">
+                          {lesson.duration_minutes && (
+                            <span>⏱ {lesson.duration_minutes} {t('minutes')}</span>
+                          )}
+                          {lesson.video_url && (
+                            <span>🎥 {lesson.video_type || 'video'}</span>
+                          )}
+                        </div>
                       </div>
+
                       <div className="flex flex-col gap-2 items-end">
                         <span className={`px-2 py-1 rounded text-xs font-medium ${
                           lesson.status === 'published' ? 'bg-green-100 text-green-800' :
