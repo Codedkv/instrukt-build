@@ -1,34 +1,44 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { withAuth } from '@/lib/withAuth';
-import { Layout } from '@/components/Layout';
-import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import type { Lesson } from '@/types/database';
-import { ArrowLeft, Clock, Video, FileText, CheckCircle2 } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { supabase } from '../lib/supabase';
+import { Loader2 } from 'lucide-react';
 
-function LessonDetailPage() {
-  const { t } = useTranslation();
-  const { lessonId } = useParams<{ lessonId: string }>();
-  const navigate = useNavigate();
+interface Lesson {
+  id: string;
+  title: string;
+  description: string;
+  content: string;
+  video_url?: string;
+}
+
+interface Question {
+  id: string;
+  question: string;
+  options: string[];
+  correct_answer: number;
+}
+
+export default function LessonDetail() {
+  const { id } = useParams<{ id: string }>();
   const [lesson, setLesson] = useState<Lesson | null>(null);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [answers, setAnswers] = useState<{ [key: string]: number }>({});
+  const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [notes, setNotes] = useState('');
 
   useEffect(() => {
-    if (lessonId) {
-      loadLesson();
-    }
-  }, [lessonId]);
+    loadLesson();
+    loadQuestions();
+  }, [id]);
 
   const loadLesson = async () => {
     try {
       const { data, error } = await supabase
         .from('lessons')
         .select('*')
-        .eq('id', lessonId)
+        .eq('id', id)
         .single();
 
       if (error) throw error;
@@ -40,148 +50,125 @@ function LessonDetailPage() {
     }
   };
 
-  const handleBackToLessons = () => {
-    navigate('/my-lessons');
+  const loadQuestions = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('questions')
+        .select('*')
+        .eq('lesson_id', id);
+
+      if (error) throw error;
+      setQuestions(data || []);
+    } catch (error) {
+      console.error('Error loading questions:', error);
+    }
+  };
+
+  const handleAnswerSelect = (questionId: string, answerIndex: number) => {
+    setAnswers({ ...answers, [questionId]: answerIndex });
+  };
+
+  const handleSubmit = () => {
+    setShowResults(true);
+  };
+
+  const calculateScore = () => {
+    let correct = 0;
+    questions.forEach((q) => {
+      if (answers[q.id] === q.correct_answer) {
+        correct++;
+      }
+    });
+    return {
+      correct,
+      total: questions.length,
+      percentage: (correct / questions.length) * 100,
+    };
   };
 
   if (loading) {
     return (
-      <Layout>
-        <div className="container mx-auto px-4 py-8">
-          <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-muted rounded w-1/4"></div>
-            <div className="h-64 bg-muted rounded"></div>
-            <div className="h-32 bg-muted rounded"></div>
-          </div>
-        </div>
-      </Layout>
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
     );
   }
 
   if (!lesson) {
-    return (
-      <Layout>
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">{t('lessonNotFound')}</h2>
-            <Button onClick={handleBackToLessons}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              {t('backToLessons')}
-            </Button>
-          </div>
-        </div>
-      </Layout>
-    );
+    return <div>Lesson not found</div>;
   }
 
   return (
-    <Layout>
-      <div className="container mx-auto px-4 py-8">
-        {/* Header with Back Button */}
-        <div className="flex items-center justify-between mb-6">
-          <Button variant="outline" onClick={handleBackToLessons}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {t('backToLessons')}
-          </Button>
-          {lesson.duration_minutes && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Clock className="h-4 w-4" />
-              {lesson.duration_minutes} {t('minutes')}
-            </div>
+    <div className="max-w-7xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6">{lesson.title}</h1>
+
+      {/* Main Grid Layout: 2/3 left column (video + notes), 1/3 right column (transcript) */}
+      <div className="grid grid-cols-3 gap-6 mb-8">
+        
+        {/* Left Column - Video and Notes */}
+        <div className="col-span-2 flex flex-col gap-6">
+          
+          {/* Video Section */}
+          {lesson.video_url && (
+            <Card className="h-full">
+              <CardContent className="p-6">
+                <video
+                  className="w-full rounded-lg"
+                  controls
+                  src={lesson.video_url}
+                >
+                  Your browser does not support the video tag.
+                </video>
+              </CardContent>
+            </Card>
           )}
+
+          {/* Notes Section - Below Video */}
+          <Card className="h-32">
+            <CardHeader>
+              <CardTitle className="text-lg">Мои заметки</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <textarea
+                className="w-full h-20 p-2 border rounded-md resize-none"
+                placeholder="Делайте заметки по ходу урока..."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+              />
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Lesson Title */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">{lesson.title}</h1>
+        {/* Right Column - Transcript (full height) */}
+        <div className="col-span-1">
+          <Card className="h-full">
+            <CardHeader>
+              <CardTitle>Транскрипция урока</CardTitle>
+            </CardHeader>
+            <CardContent className="overflow-y-auto">
+              <p className="text-gray-700 whitespace-pre-wrap">
+                {lesson.description || lesson.content}
+              </p>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Main Content Grid - 3 Column Layout (2:1 horizontal split) */}
-        <div className="grid grid-cols-3 gap-6 mb-6">
-          {/* Left Column - Video (2/3 width) */}
-          <div className="col-span-2">
-            {lesson.video_url && (
-              <Card className="h-full">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Video className="h-5 w-5" />
-                    {t('lessonVideo')}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="aspect-video w-full rounded-lg overflow-hidden bg-muted">
-                    <iframe
-                      src={lesson.video_url}
-                      title={lesson.title}
-                      className="w-full h-full"
-                      allowFullScreen
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+      </div>
 
-          {/* Right Column - Transcript + Notes */}
-          <div className="col-span-1 flex flex-col gap-6">
-            {/* Transcript - flexible height */}
-            <div className="flex-1">
-              <Card className="h-full">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5" />
-                    {t('lessonTranscription')}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="prose prose-sm max-w-none">
-                    <p className="whitespace-pre-wrap">{lesson.description || lesson.content}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Notes - fixed height */}
-            <div>
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <FileText className="h-4 w-4" />
-                    {t('notes') || 'Заметки'}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <textarea
-                    className="w-full h-32 p-2 text-sm border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder={t('notesPlaceholder') || 'Делайте заметки во время просмотра...'}
-                  />
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-
-        {/* Test Section - Full Width Below */}
+      {/* Test Section - Placeholder */}
+      {questions.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5" />
-              {t('lessonTest')}
+              {'lessonTest'}
             </CardTitle>
-            <CardDescription>
-              {t('lessonTestDescription')}
-            </CardDescription>
+            {!('lessonTestDescription')}
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8 text-muted-foreground">
-              <p>{t('testComingSoon')}</p>
-            </div>
           </CardContent>
         </Card>
-      </div>
-    </Layout>
+      )}
+    </div>
   );
 }
-
-export default withAuth(LessonDetailPage);
