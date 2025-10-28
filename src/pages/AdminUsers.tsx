@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Shield, User, Eye, Search } from 'lucide-react'
+import { Shield, User, Eye, Search, Trash2 } from 'lucide-react'
 
 interface UserData {
   id: string
@@ -69,8 +69,11 @@ const AdminUsers = () => {
   const [sortBy, setSortBy] = useState<SortOption>('date')
   const [selectedUser, setSelectedUser] = useState<UserDetailsData | null>(null)
   const [detailsModalOpen, setDetailsModalOpen] = useState(false)
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [userToDelete, setUserToDelete] = useState<string | null>(null)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
 
-    useEffect(() => {
+  useEffect(() => {
     fetchUsers()
   }, [])
 
@@ -118,7 +121,6 @@ const AdminUsers = () => {
 
     setFilteredUsers(result)
   }
-
 
   const fetchUsers = async () => {
     try {
@@ -232,7 +234,6 @@ const AdminUsers = () => {
       console.error('Error toggling role:', error)
     }
   }
-
   const openUserDetails = async (userId: string) => {
     try {
       // Получаем детали пользователя
@@ -323,6 +324,45 @@ const AdminUsers = () => {
     }
   }
 
+  const openDeleteModal = (userId: string) => {
+    setUserToDelete(userId)
+    setDeleteConfirmText('')
+    setDeleteModalOpen(true)
+  }
+
+  const deleteUser = async () => {
+    if (deleteConfirmText.toLowerCase() !== 'delete' || !userToDelete) {
+      return
+    }
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', userToDelete)
+
+      if (error) throw error
+
+      toast({
+        title: t('success'),
+        description: t('adminUsersSuccessDeleted'),
+      })
+
+      // Обновляем список пользователей
+      setUsers((prev) => prev.filter((user) => user.id !== userToDelete))
+      setDeleteModalOpen(false)
+      setUserToDelete(null)
+      setDeleteConfirmText('')
+    } catch (error: any) {
+      toast({
+        title: t('error'),
+        description: t('adminUsersErrorDelete'),
+        variant: 'destructive',
+      })
+      console.error('Error deleting user:', error)
+    }
+  }
+
   const formatTime = (seconds: number | null): string => {
     if (!seconds) return '—'
     const mins = Math.floor(seconds / 60)
@@ -349,7 +389,7 @@ const AdminUsers = () => {
               <h1 className="text-3xl font-bold">{t('adminUsersPageTitle')}</h1>
             </div>
 
-                        {/* Поиск, фильтр и сортировка */}
+            {/* Поиск, фильтр и сортировка */}
             <div className="mb-6 flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -387,7 +427,6 @@ const AdminUsers = () => {
                 </Select>
               </div>
             </div>
-
 
             {loading ? (
               <div className="text-center py-8 text-muted-foreground">
@@ -448,7 +487,7 @@ const AdminUsers = () => {
                         </td>
                         <td className="py-3 px-4">
                           <div className="flex items-center justify-end gap-2">
-                                                        <Button
+                            <Button
                               variant="outline"
                               size="sm"
                               onClick={() => toggleAdminRole(user.id, user.role)}
@@ -463,6 +502,13 @@ const AdminUsers = () => {
                             >
                               <Eye className="h-4 w-4 mr-1" />
                               {t('adminUsersViewDetails')}
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => openDeleteModal(user.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
                         </td>
@@ -568,7 +614,7 @@ const AdminUsers = () => {
                                 <div>
                                   <p className="font-medium">{attempt.quiz.title}</p>
                                   <p className="text-xs text-muted-foreground">
-                                    {attempt.quiz.lesson.title}
+                                                                        {attempt.quiz.lesson.title}
                                   </p>
                                 </div>
                               </td>
@@ -606,6 +652,51 @@ const AdminUsers = () => {
                 </div>
               </div>
             )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Модальное окно удаления пользователя */}
+        <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t('adminUsersDeleteModalTitle')}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                {t('adminUsersDeleteModalDescription')}
+              </p>
+              <div>
+                <label className="text-sm font-semibold mb-2 block">
+                  {t('adminUsersDeleteModalInputLabel')}
+                </label>
+                <Input
+                  type="text"
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                  placeholder="delete"
+                  className="w-full"
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setDeleteModalOpen(false)
+                    setDeleteConfirmText('')
+                    setUserToDelete(null)
+                  }}
+                >
+                  {t('adminUsersDeleteModalCancel')}
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={deleteUser}
+                  disabled={deleteConfirmText.toLowerCase() !== 'delete'}
+                >
+                  {t('adminUsersDeleteModalConfirm')}
+                </Button>
+              </div>
+            </div>
           </DialogContent>
         </Dialog>
       </div>
