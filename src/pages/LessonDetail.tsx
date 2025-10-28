@@ -41,7 +41,7 @@ function LessonDetailPage() {
   };
 
   const handleBackToLessons = () => {
-    navigate('/my-lessons');  // ✅ ПРАВИЛЬНЫЙ URL
+    navigate('/my-lessons');
   };
 
   if (loading) {
@@ -99,47 +99,77 @@ function LessonDetailPage() {
           )}
         </div>
 
-        {/* Video Section */}
-        {lesson.video_url && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Video className="h-5 w-5" />
-                {t('lessonVideo')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="aspect-video w-full rounded-lg overflow-hidden bg-muted">
-                <iframe
-                  src={lesson.video_url}
-                  title={lesson.title}
-                  className="w-full h-full"
-                  allowFullScreen
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                />
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        {/* Main Content Grid - 3 Column Layout (2:1 horizontal split) */}
+        <div className="grid grid-cols-3 gap-6 mb-6">
+          {/* Left Column - Video (2/3 width) */}
+          <div className="col-span-2">
+            {lesson.video_url && (
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Video className="h-5 w-5" />
+                    {t('lessonVideo')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="aspect-video w-full rounded-lg overflow-hidden bg-muted">
+                    <iframe
+                      src={lesson.video_url}
+                      title={lesson.title}
+                      className="w-full h-full"
+                      allowFullScreen
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
 
-        {/* Transcription/Content Section */}
-        {lesson.content && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                {t('lessonTranscription')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="prose prose-sm max-w-none">
-                <p className="whitespace-pre-wrap">{lesson.content}</p>
+          {/* Right Column - Transcript (top 2/3) + Notes (bottom 1/3) */}
+          <div className="col-span-1">
+            <div className="grid grid-rows-3 gap-6 h-full">
+              {/* Transcript - spans 2 rows (2/3 height) */}
+              <div className="row-span-2">
+                {lesson.content && (
+                  <Card className="h-full">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <FileText className="h-5 w-5" />
+                        {t('lessonTranscription')}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="prose prose-sm max-w-none overflow-y-auto max-h-96">
+                        <p className="whitespace-pre-wrap">{lesson.content}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
-            </CardContent>
-          </Card>
-        )}
 
-        {/* Test Section - Placeholder */}
+              {/* Notes - spans 1 row (1/3 height) */}
+              <div className="row-span-1">
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-base">
+                      <FileText className="h-4 w-4" />
+                      {t('notes') || 'Заметки'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <textarea
+                      className="w-full h-24 p-2 text-sm border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder={t('notesPlaceholder') || 'Делайте заметки во время просмотра...'}
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Test Section - Full Width Below */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
