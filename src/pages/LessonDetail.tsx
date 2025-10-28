@@ -1,174 +1,237 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { supabase } from '../lib/supabase';
-import { Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { withAuth } from '@/lib/withAuth'
+import { supabase } from '@/integrations/supabase/client'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { FileText, BookOpen, CheckCircle2, XCircle, Download } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { useToast } from '@/hooks/use-toast'
+import VideoUrlInput from '@/components/VideoUrlInput'
+import { VideoMetadata } from '@/types/quiz'
 
 interface Lesson {
-  id: string;
-  title: string;
-  description: string;
-  content: string;
-  video_url?: string;
+  id: string
+  title: string
+  description: string
+  video_url: string
+  transcript_text: string
+  course_id: string
 }
 
-interface Question {
-  id: string;
-  question: string;
-  options: string[];
-  correct_answer: number;
-}
-
-export default function LessonDetail() {
-  const { id } = useParams<{ id: string }>();
-  const [lesson, setLesson] = useState<Lesson | null>(null);
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [answers, setAnswers] = useState<{ [key: string]: number }>({});
-  const [showResults, setShowResults] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [notes, setNotes] = useState('');
+function LessonDetail() {
+  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const { t } = useTranslation()
+  const { toast } = useToast()
+  const [lesson, setLesson] = useState<Lesson | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [notes, setNotes] = useState('')
+  const [savingNotes, setSavingNotes] = useState(false)
 
   useEffect(() => {
-    loadLesson();
-    loadQuestions();
-  }, [id]);
+    fetchLesson()
+    fetchNotes()
+  }, [id])
 
-  const loadLesson = async () => {
+  const fetchLesson = async () => {
     try {
       const { data, error } = await supabase
         .from('lessons')
         .select('*')
         .eq('id', id)
-        .single();
+        .single()
 
-      if (error) throw error;
-      setLesson(data);
+      if (error) throw error
+      setLesson(data)
     } catch (error) {
-      console.error('Error loading lesson:', error);
+      console.error('Error fetching lesson:', error)
+      toast({
+        title: t('error'),
+        description: t('failedToLoadLesson'),
+        variant: 'destructive',
+      })
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  const loadQuestions = async () => {
+  const fetchNotes = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
       const { data, error } = await supabase
-        .from('questions')
-        .select('*')
-        .eq('lesson_id', id);
+        .from('lesson_notes')
+        .select('content')
+        .eq('lesson_id', id)
+        .eq('user_id', user.id)
+        .single()
 
-      if (error) throw error;
-      setQuestions(data || []);
-    } catch (error) {
-      console.error('Error loading questions:', error);
-    }
-  };
-
-  const handleAnswerSelect = (questionId: string, answerIndex: number) => {
-    setAnswers({ ...answers, [questionId]: answerIndex });
-  };
-
-  const handleSubmit = () => {
-    setShowResults(true);
-  };
-
-  const calculateScore = () => {
-    let correct = 0;
-    questions.forEach((q) => {
-      if (answers[q.id] === q.correct_answer) {
-        correct++;
+      if (data) {
+        setNotes(data.content)
       }
-    });
-    return {
-      correct,
-      total: questions.length,
-      percentage: (correct / questions.length) * 100,
-    };
-  };
+    } catch (error) {
+      console.error('Error fetching notes:', error)
+    }
+  }
+
+  const saveNotes = async () => {
+    setSavingNotes(true)
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('User not authenticated')
+
+      const { error } = await supabase
+        .from('lesson_notes')
+        .upsert({
+          lesson_id: id,
+          user_id: user.id,
+          content: notes,
+          updated_at: new Date().toISOString(),
+        })
+
+      if (error) throw error
+
+      toast({
+        title: t('success'),
+        description: t('notesSaved'),
+      })
+    } catch (error) {
+      console.error('Error saving notes:', error)
+      toast({
+        title: t('error'),
+        description: t('failedToSaveNotes'),
+        variant: 'destructive',
+      })
+    } finally {
+      setSavingNotes(false)
+    }
+  }
+
+  const downloadTranscript = () => {
+    if (!lesson?.transcript_text) return
+
+    const element = document.createElement('a')
+    const file = new Blob([lesson.transcript_text], { type: 'text/plain' })
+    element.href = URL.createObjectURL(file)
+    element.download = `${lesson.title}-transcript.txt`
+    document.body.appendChild(element)
+    element.click()
+    document.body.removeChild(element)
+  }
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
+        <div className="text-lg">{t('loading')}</div>
       </div>
-    );
+    )
   }
 
   if (!lesson) {
-    return <div>Lesson not found</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">{t('lessonNotFound')}</div>
+      </div>
+    )
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">{lesson.title}</h1>
+    <div className="container mx-auto p-6 max-w-7xl">
+      <Button
+        variant="outline"
+        onClick={() => navigate(-1)}
+        className="mb-6"
+      >
+        {t('back')}
+      </Button>
 
-      {/* Main Grid Layout: 2/3 left column (video + notes), 1/3 right column (transcript) */}
-      <div className="grid grid-cols-3 gap-6 mb-8">
-        
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Video and Notes */}
-        <div className="col-span-2 flex flex-col gap-6">
-          
+        <div className="lg:col-span-2 space-y-6">
           {/* Video Section */}
-          {lesson.video_url && (
-            <Card className="h-full">
-              <CardContent className="p-6">
-                <video
-                  className="w-full rounded-lg"
-                  controls
-                  src={lesson.video_url}
-                >
-                  Your browser does not support the video tag.
-                </video>
-              </CardContent>
-            </Card>
-          )}
+          <Card>
+            <CardContent className="p-6">
+              <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden">
+                {lesson.video_url ? (
+                  <iframe
+                    src={lesson.video_url}
+                    className="w-full h-full"
+                    allowFullScreen
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full text-gray-400">
+                    {t('noVideoAvailable')}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
-          {/* Notes Section - Below Video */}
-          <Card className="h-32">
+          {/* Notes Section */}
+          <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Мои заметки</CardTitle>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-5 h-5" />
+                  <CardTitle>{t('myNotes')}</CardTitle>
+                </div>
+                <Button
+                  onClick={saveNotes}
+                  disabled={savingNotes}
+                  size="sm"
+                >
+                  {savingNotes ? t('saving') : t('saveNotes')}
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <textarea
-                className="w-full h-20 p-2 border rounded-md resize-none"
-                placeholder="Делайте заметки по ходу урока..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
+                className="w-full h-48 p-4 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder={t('takeNotesHere')}
               />
             </CardContent>
           </Card>
         </div>
 
-        {/* Right Column - Transcript (full height) */}
-        <div className="col-span-1">
+        {/* Right Column - Transcript */}
+        <div className="lg:col-span-1">
           <Card className="h-full">
             <CardHeader>
-              <CardTitle>Транскрипция урока</CardTitle>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="w-5 h-5" />
+                  <CardTitle>{t('transcript')}</CardTitle>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={downloadTranscript}
+                  disabled={!lesson.transcript_text}
+                >
+                  <Download className="w-4 h-4" />
+                </Button>
+              </div>
             </CardHeader>
-            <CardContent className="overflow-y-auto">
-              <p className="text-gray-700 whitespace-pre-wrap">
-                {lesson.description || lesson.content}
-              </p>
+            <CardContent>
+              <div className="prose prose-sm max-w-none h-[calc(100vh-300px)] overflow-y-auto">
+                {lesson.transcript_text ? (
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed">
+                    {lesson.transcript_text}
+                  </p>
+                ) : (
+                  <p className="text-gray-400 text-sm">{t('noTranscriptAvailable')}</p>
+                )}
+              </div>
             </CardContent>
           </Card>
         </div>
-
       </div>
-
-      {/* Test Section - Placeholder */}
-      {questions.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5" />
-              {'lessonTest'}
-            </CardTitle>
-            {!('lessonTestDescription')}
-          </CardHeader>
-          <CardContent>
-          </CardContent>
-        </Card>
-      )}
     </div>
-  );
+  )
 }
+
+export default withAuth(LessonDetail)
