@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import type { Lesson } from '@/types/database';
-import { ArrowLeft, Clock, Video, FileText, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Clock, Video, FileText, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 function LessonDetailPage() {
@@ -17,6 +17,7 @@ function LessonDetailPage() {
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [loading, setLoading] = useState(true);
   const [notes, setNotes] = useState('');
+  const [notesExpanded, setNotesExpanded] = useState(false);
 
   useEffect(() => {
     if (lessonId) {
@@ -120,20 +121,32 @@ function LessonDetailPage() {
 
             {/* Notes Section */}
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5" />
-                  {t('myNotes')}
-                </CardTitle>
+              <CardHeader 
+                className="cursor-pointer"
+                onClick={() => setNotesExpanded(!notesExpanded)}
+              >
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    {t('myNotes')}
+                  </CardTitle>
+                  {notesExpanded ? (
+                    <ChevronUp className="h-5 w-5" />
+                  ) : (
+                    <ChevronDown className="h-5 w-5" />
+                  )}
+                </div>
               </CardHeader>
-              <CardContent>
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  className="w-full h-48 p-4 bg-muted border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder={t('takeNotesHere')}
-                />
-              </CardContent>
+              {notesExpanded && (
+                <CardContent>
+                  <textarea
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    className="w-full h-48 p-4 bg-muted border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder={t('takeNotesHere')}
+                  />
+                </CardContent>
+              )}
             </Card>
           </div>
 
@@ -148,7 +161,7 @@ function LessonDetailPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="prose prose-sm max-w-none h-[calc(100vh-300px)] overflow-y-auto">
+                  <div className="prose prose-sm max-w-none overflow-y-auto" style={{ maxHeight: notesExpanded ? 'calc(100vh - 200px)' : 'calc(100vh - 450px)' }}>
                     <p className="whitespace-pre-wrap">{lesson.description}</p>
                   </div>
                 </CardContent>
