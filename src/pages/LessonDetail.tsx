@@ -95,9 +95,6 @@ function LessonDetailPage() {
         {/* Lesson Title */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">{lesson.title}</h1>
-          {lesson.description && (
-            <p className="text-lg text-muted-foreground">{lesson.description}</p>
-          )}
         </div>
 
         {/* Main Content Grid */}
@@ -133,7 +130,7 @@ function LessonDetailPage() {
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full h-48 p-4 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full h-48 p-4 bg-muted border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder={t('takeNotesHere')}
                 />
               </CardContent>
@@ -142,7 +139,7 @@ function LessonDetailPage() {
 
           {/* Right Column - Transcription */}
           <div className="lg:col-span-1">
-            {lesson.content && (
+            {lesson.description && (
               <Card className="h-full">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -152,13 +149,48 @@ function LessonDetailPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="prose prose-sm max-w-none h-[calc(100vh-300px)] overflow-y-auto">
-                    <p className="whitespace-pre-wrap">{lesson.content}</p>
+                    <p className="whitespace-pre-wrap">{lesson.description}</p>
                   </div>
                 </CardContent>
               </Card>
             )}
           </div>
         </div>
+
+        {/* Transcription/Content Section */}
+        {lesson.content && (
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                {t('lessonTranscription')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="prose prose-sm max-w-none">
+                <p className="whitespace-pre-wrap">{lesson.content}</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Test Section - Placeholder */}
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5" />
+              {t('lessonTest')}
+            </CardTitle>
+            <CardDescription>
+              {t('lessonTestDescription')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-8 text-muted-foreground">
+              <p>{t('testComingSoon')}</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </Layout>
   );
