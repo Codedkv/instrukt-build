@@ -121,86 +121,47 @@ const AdminUsers = () => {
 
     setFilteredUsers(result)
   }
-  const fetchUsers = async () => {
-    try {
-      setLoading(true)
+ const fetchUsers = async () => {
+  try {
+    setLoading(true)
 
-      // Получаем всех пользователей с их ролями
-      const { data: profilesData, error: profilesError } = await supabase
-        .from('profiles')
-        .select(`
-          id,
-          email,
-          username,
-          created_at,
-          user_roles (
-            role
-          )
-        `)
-        .order('email')
+    // Один запрос вместо трёх!
+    // Используем RPC функцию с пагинацией
+    const { data: usersData, error } = await supabase.rpc('get_users_paginated', {
+      page_number: 1,
+      page_size: 1000, // Пока загружаем всех, позже добавим UI для пагинации
+      role_filter: null,
+      search_query: null,
+      sort_by: 'created_at',
+      sort_direction: 'desc'
+    })
 
-      if (profilesError) throw profilesError
+    if (error) throw error
 
-      // Получаем прогресс для всех пользователей
-      const { data: progressData, error: progressError } = await supabase
-        .from('progress')
-        .select('user_id, progress_percentage')
+    // Преобразуем данные в нужный формат
+    const formattedUsers: UserData[] = (usersData || []).map((user: any) => ({
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      role: user.role as 'admin' | 'student',
+      averageProgress: user.average_progress,
+      testAttempts: Number(user.test_attempts),
+      createdAt: user.created_at,
+    }))
 
-      if (progressError) throw progressError
-
-      // Получаем количество попыток тестов для всех пользователей
-      const { data: attemptsData, error: attemptsError } = await supabase
-        .from('quiz_attempts')
-        .select('user_id, id')
-
-      if (attemptsError) throw attemptsError
-
-      // Обрабатываем данные
-      const usersWithStats: UserData[] = (profilesData || []).map((profile: any) => {
-        // Роль пользователя
-        const role = profile.user_roles?.[0]?.role || 'student'
-
-        // Средний прогресс по всем урокам
-        const userProgress = (progressData || []).filter(
-          (p: any) => p.user_id === profile.id
-        )
-        const averageProgress =
-          userProgress.length > 0
-            ? Math.round(
-                userProgress.reduce((sum: number, p: any) => sum + (p.progress_percentage || 0), 0) /
-                  userProgress.length
-              )
-            : 0
-
-        // Количество всех попыток тестов (включая неудачные)
-        const testAttempts = (attemptsData || []).filter(
-          (a: any) => a.user_id === profile.id
-        ).length
-
-        return {
-          id: profile.id,
-          email: profile.email,
-          username: profile.username,
-          role,
-          averageProgress,
-          testAttempts,
-          createdAt: profile.created_at,
-        }
-      })
-
-      setUsers(usersWithStats)
-      setFilteredUsers(usersWithStats)
-    } catch (error: any) {
-      toast({
-        title: t('error'),
-        description: t('adminUsersErrorLoad'),
-        variant: 'destructive',
-      })
-      console.error('Error fetching users:', error)
-    } finally {
-      setLoading(false)
-    }
+    setUsers(formattedUsers)
+    setFilteredUsers(formattedUsers)
+  } catch (error: any) {
+    toast({
+      title: t('error'),
+      description: t('adminUsersErrorLoad'),
+      variant: 'destructive',
+    })
+    console.error('Error fetching users:', error)
+  } finally {
+    setLoading(false)
   }
+}
 
   const toggleAdminRole = async (userId: string, currentRole: 'admin' | 'student') => {
     try {
