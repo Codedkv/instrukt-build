@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { withAuth } from '@/lib/withAuth';
 import { Layout } from '@/components/Layout';
@@ -7,23 +7,40 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import type { Lesson } from '@/types/database';
-import { ArrowLeft, Clock, Video, FileText, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, Clock, Video, FileText, CheckCircle2, ChevronDown, ChevronUp, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/lib/AuthProvider';
 
 function LessonDetailPage() {
   const { t } = useTranslation();
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [loading, setLoading] = useState(true);
   const [notes, setNotes] = useState('');
   const [notesExpanded, setNotesExpanded] = useState(false);
+  const [notesSaving, setNotesSaving] = useState(false);
+  const [notesSaved, setNotesSaved] = useState(false);
+  const [progressId, setProgressId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (lessonId) {
+    if (lessonId && user) {
       loadLesson();
+      loadProgress();
     }
-  }, [lessonId]);
+  }, [lessonId, user]);
+
+  // Debounce для автосохранения заметок
+  useEffect(() => {
+    if (!progressId && !notes) return; // Не сохраняем пустые заметки без прогресса
+
+    const timeoutId = setTimeout(() => {
+      saveNotes();
+    }, 1500); // Сохранение через 1.5 секунды после прекращения ввода
+
+    return () => clearTimeout(timeoutId);
+  }, [notes, progressId]);
 
   const loadLesson = async () => {
     try {
@@ -39,6 +56,80 @@ function LessonDetailPage() {
       console.error('Error loading lesson:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadProgress = async () => {
+    if (!user?.id || !lessonId) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('progress')
+        .select('id, notes')
+        .eq('user_id', user.id)
+        .eq('lesson_id', lessonId)
+        .maybeSingle();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error loading progress:', error);
+        return;
+      }
+
+      if (data) {
+        setProgressId(data.id);
+        setNotes(data.notes || '');
+      }
+    } catch (error) {
+      console.error('Error loading progress:', error);
+    }
+  };
+
+  const saveNotes = async () => {
+    if (!user?.id || !lessonId) return;
+
+    setNotesSaving(true);
+    setNotesSaved(false);
+
+    try {
+      if (progressId) {
+        // Обновляем существующую запись
+        const { error } = await supabase
+          .from('progress')
+          .update({ 
+            notes,
+            updated_at: new Date().toISOString(),
+            last_accessed: new Date().toISOString()
+          })
+          .eq('id', progressId);
+
+        if (error) throw error;
+      } else {
+        // Создаём новую запись
+        const { data, error } = await supabase
+          .from('progress')
+          .insert({
+            user_id: user.id,
+            lesson_id: lessonId,
+            notes,
+            progress_percentage: 0,
+            completed: false
+          })
+          .select('id')
+          .single();
+
+        if (error) throw error;
+        if (data) {
+          setProgressId(data.id);
+        }
+      }
+
+      // Показываем индикатор "Сохранено"
+      setNotesSaved(true);
+      setTimeout(() => setNotesSaved(false), 2000);
+    } catch (error) {
+      console.error('Error saving notes:', error);
+    } finally {
+      setNotesSaving(false);
     }
   };
 
@@ -129,6 +220,17 @@ function LessonDetailPage() {
                   <CardTitle className="flex items-center gap-2">
                     <FileText className="h-5 w-5" />
                     {t('myNotes')}
+                    {notesSaved && (
+                      <span className="flex items-center gap-1 text-sm font-normal text-green-600">
+                        <Check className="h-4 w-4" />
+                        {t('saved')}
+                      </span>
+                    )}
+                    {notesSaving && (
+                      <span className="text-sm font-normal text-muted-foreground">
+                        {t('saving')}...
+                      </span>
+                    )}
                   </CardTitle>
                   {notesExpanded ? (
                     <ChevronUp className="h-5 w-5" />
