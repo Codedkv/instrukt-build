@@ -330,17 +330,24 @@ const AdminUsers = () => {
   }
 
   const deleteUser = async () => {
-    if (deleteConfirmText.toLowerCase() !== 'delete' || !userToDelete) {
-      return
+  if (deleteConfirmText.toLowerCase() !== 'delete' || !userToDelete) {
+    return
+  }
+
+  try {
+    // Вызываем Database Function для удаления пользователя
+    const { data, error } = await supabase.rpc('delete_user_by_admin', {
+      user_id_to_delete: userToDelete
+    })
+
+    if (error) throw error
+
+    // Проверяем результат
+    if (data && !data.success) {
+      throw new Error(data.error || 'Unknown error')
     }
+    // ... остальное остается как было
 
-    try {
-      // Вызываем Edge Function для удаления пользователя
-      const { data, error } = await supabase.functions.invoke('delete-user', {
-        body: { userId: userToDelete }
-      })
-
-      if (error) throw error
 
       toast({
         title: t('success'),
