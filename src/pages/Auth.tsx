@@ -5,9 +5,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { toast } from 'sonner'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { Mail, AlertCircle } from 'lucide-react'
 
 function AuthPage() {
   const { t } = useTranslation()
@@ -20,6 +22,7 @@ function AuthPage() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showEmailConfirmation, setShowEmailConfirmation] = useState(false)
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -54,7 +57,8 @@ function AuthPage() {
         if (error) {
           toast.error(error.message)
         } else {
-          toast.success(t('registrationSuccess'))
+          // Показываем явное сообщение о подтверждении email
+          setShowEmailConfirmation(true)
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -71,6 +75,43 @@ function AuthPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  // Если показываем подтверждение email - показываем только его
+  if (showEmailConfirmation) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Mail className="h-5 w-5 text-green-600" />
+              {t('registrationSuccess')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Alert>
+              <Mail className="h-4 w-4" />
+              <AlertTitle className="text-base font-semibold">
+                {t('emailConfirmationSent')}
+              </AlertTitle>
+              <AlertDescription className="mt-2 text-sm">
+                {t('checkSpamFolder')}
+              </AlertDescription>
+            </Alert>
+
+            <div className="pt-4 space-y-3">
+              <Button 
+                onClick={() => setSearchParams({})}
+                className="w-full"
+                variant="outline"
+              >
+                {t('loginButton')}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
