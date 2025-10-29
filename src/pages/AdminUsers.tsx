@@ -121,7 +121,6 @@ const AdminUsers = () => {
 
     setFilteredUsers(result)
   }
-
   const fetchUsers = async () => {
     try {
       setLoading(true)
@@ -336,10 +335,10 @@ const AdminUsers = () => {
     }
 
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', userToDelete)
+      // Вызываем Edge Function для удаления пользователя
+      const { data, error } = await supabase.functions.invoke('delete-user', {
+        body: { userId: userToDelete }
+      })
 
       if (error) throw error
 
@@ -379,7 +378,6 @@ const AdminUsers = () => {
       minute: '2-digit',
     })
   }
-
   return (
     <Layout>
       <div className="container mx-auto py-8 px-4">
@@ -614,7 +612,7 @@ const AdminUsers = () => {
                                 <div>
                                   <p className="font-medium">{attempt.quiz.title}</p>
                                   <p className="text-xs text-muted-foreground">
-                                                                        {attempt.quiz.lesson.title}
+                                    {attempt.quiz.lesson.title}
                                   </p>
                                 </div>
                               </td>
@@ -705,4 +703,3 @@ const AdminUsers = () => {
 }
 
 export default withAuth(AdminUsers, 'admin')
-
