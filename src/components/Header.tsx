@@ -2,19 +2,21 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useUser } from '@/contexts/UserContext'
 import { supabase } from '@/integrations/supabase/client'
 import { Button } from '@/components/ui/button'
-import { LogOut, Shield, Menu } from 'lucide-react'
+import { LogOut, Shield, Menu, LifeBuoy } from 'lucide-react'
 import { toast } from 'sonner'
 import { useState } from 'react'
 import { BurgerMenu } from '@/components/BurgerMenu'
 import { useTranslation } from 'react-i18next'
+// Импортируй SupportModal, когда сделаешь компонент
+import { SupportModal } from '@/components/SupportModal'
 
 export function Header() {
   const navigate = useNavigate()
   const { user, profile, loading, isAdmin } = useUser()
   const { t } = useTranslation()
-  
-  // Состояние для управления отображением бургер-меню
+
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false)
+  const [isSupportOpen, setIsSupportOpen] = useState(false)
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -22,7 +24,6 @@ export function Header() {
   }
 
   const handleAdminClick = async () => {
-    // Дополнительная проверка admin-роли (живой запрос в Supabase)
     const { data: roleData, error } = await supabase
       .from('user_roles')
       .select('role')
@@ -38,7 +39,6 @@ export function Header() {
     }
   }
 
-  // Обработчик открытия/закрытия бургер-меню
   const toggleBurgerMenu = () => {
     setIsBurgerMenuOpen(!isBurgerMenuOpen)
   }
@@ -75,12 +75,11 @@ export function Header() {
             </nav>
           )}
 
-          {/* Правая часть: кнопки регистрации/входа или профиль + бургер */}
+          {/* Правая часть: кнопки регистрации/входа или профиль + бургер + support */}
           <div className="flex items-center gap-3">
             {loading ? (
               <div className="text-sm text-muted-foreground">{t('loading')}</div>
             ) : user ? (
-              // Авторизованный пользователь: имя и кнопка выхода
               <>
                 <span className="hidden md:inline text-sm text-muted-foreground">
                   {profile?.full_name || user.email}
@@ -96,7 +95,6 @@ export function Header() {
                 </Button>
               </>
             ) : (
-              // Неавторизованный пользователь: кнопки входа и регистрации
               <>
                 <Link to="/auth">
                   <Button
@@ -117,6 +115,17 @@ export function Header() {
               </>
             )}
 
+            {/* Кнопка поддержка */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsSupportOpen(true)}
+              className="gap-2"
+            >
+              <LifeBuoy className="h-4 w-4" />
+              {t('support')}
+            </Button>
+
             {/* Кнопка-бургер (всегда видна) */}
             <Button
               variant="ghost"
@@ -136,6 +145,14 @@ export function Header() {
         <BurgerMenu
           isOpen={isBurgerMenuOpen}
           onClose={() => setIsBurgerMenuOpen(false)}
+        />
+      )}
+
+      {/* Модальное окно поддержки */}
+      {isSupportOpen && (
+        <SupportModal
+          open={isSupportOpen}
+          onClose={() => setIsSupportOpen(false)}
         />
       )}
     </header>
