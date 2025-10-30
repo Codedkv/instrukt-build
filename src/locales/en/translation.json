@@ -259,5 +259,12 @@
 "quizDeleteConfirm": "Delete quiz? This action is irreversible.",
 "quizRequired": "Quiz is required to complete lesson",
 "quizMinQuestions": "Minimum 1 question required",
-"quizValidationError": "Please check quiz completion"
+"quizValidationError": "Please check quiz completion",
+"support.title": "Your message",
+"support.messagePlaceholder": "Describe your issue or ask a question",
+"support.attach": "Attach file",
+"support.removeFile": "Remove",
+"support.send": "Send",
+"support.cancel": "Cancel",
+"support.success": "Thank you, your message has been sent! We will contact you via the email you used to register in PerplexitySchool."
 }
