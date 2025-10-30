@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Dialog, DialogHeader, DialogTitle, DialogContent, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,15 +33,15 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      {/* Хедер: точно в одной строке, без лишних отступов */}
-      <div className="flex flex-row items-center justify-between h-12 px-4">
-        <DialogTitle className="text-lg font-bold">{t("support.title", "Ваше сообщение")}</DialogTitle>
-        <Button variant="ghost" size="icon" onClick={handleClose}>
-          <X className="h-5 w-5" />
-        </Button>
-      </div>
-      <form onSubmit={handleSubmit}>
-        <DialogContent className="space-y-4 py-2">
+      <DialogContent>
+        {/* Хедер: одна строка */}
+        <div className="flex flex-row items-center justify-between mb-2">
+          <span className="text-lg font-bold">{t("support.title", "Ваше сообщение")}</span>
+          <Button variant="ghost" size="icon" onClick={handleClose} tabIndex={-1}>
+            <X className="h-5 w-5" />
+          </Button>
+        </div>
+        <form onSubmit={handleSubmit}>
           <label className="block text-sm font-medium mb-2">
             {t("support.messageLabel", "Ваше сообщение")}
           </label>
@@ -89,7 +89,6 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
               </Button>
             )}
           </div>
-          {/* Просто зафриженное поле email */}
           <Input
             type="email"
             placeholder="E-mail"
@@ -102,22 +101,23 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
               {t("support.success", "Спасибо, сообщение отправлено! Мы свяжемся с вами как можно скорее.")}
             </div>
           )}
-        </DialogContent>
-        <DialogFooter>
-          <Button
-            type="submit"
-            variant="primary"
-            disabled={sending || sent || !message}
-            className="gap-2"
-          >
-            <Send className="h-4 w-4" />
-            {t("support.send", "Отправить")}
-          </Button>
-          <Button type="button" variant="secondary" onClick={handleClose}>
-            {t("support.cancel", "Отмена")}
-          </Button>
-        </DialogFooter>
-      </form>
+          {/* Кнопки управления внизу */}
+          <div className="flex justify-end gap-2 mt-6">
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={sending || sent || !message}
+              className="gap-2"
+            >
+              <Send className="h-4 w-4" />
+              {t("support.send", "Отправить")}
+            </Button>
+            <Button type="button" variant="secondary" onClick={handleClose}>
+              {t("support.cancel", "Отмена")}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }
