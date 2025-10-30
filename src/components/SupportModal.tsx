@@ -27,10 +27,9 @@ export function SupportModal({ open, onClose, user }: { open: boolean; onClose: 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Проверка email только для незарегистрированных
     if (!user?.id) {
       if (!validateEmail(email)) {
-        setEmailError(t("support.emailRequired", "Пожалуйста, укажите ваш email"));
+        setEmailError(t("emailRequired", "Пожалуйста, укажите адрес электронной почты"));
         return;
       }
       setEmailError("");
@@ -63,12 +62,13 @@ export function SupportModal({ open, onClose, user }: { open: boolean; onClose: 
             disabled={sending || sent}
             maxLength={3000}
           />
-          {/* field: email (только для незарегистрированных) */}
+          {/* Поле email для незарегистрированных */}
           {!user?.id && (
             <div className="mt-4">
+              <label className="block text-sm font-medium mb-2">{t("email")}</label>
               <Input
                 type="email"
-                placeholder={t("support.emailPlaceholder", "Введите ваш email")}
+                placeholder={t("emailPlaceholder")}
                 value={email}
                 required
                 onChange={e => setEmail(e.target.value)}
