@@ -33,15 +33,15 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      {/* Заголовок и крестик — ниже, на одном уровне, с отступом сверху */}
-      <div className="flex flex-row items-center justify-between pt-6 px-6">
+      {/* Хедер: точно в одной строке, без лишних отступов */}
+      <div className="flex flex-row items-center justify-between h-12 px-4">
         <DialogTitle className="text-lg font-bold">{t("support.title", "Ваше сообщение")}</DialogTitle>
         <Button variant="ghost" size="icon" onClick={handleClose}>
           <X className="h-5 w-5" />
         </Button>
       </div>
       <form onSubmit={handleSubmit}>
-        <DialogContent className="space-y-4 pt-2">
+        <DialogContent className="space-y-4 py-2">
           <label className="block text-sm font-medium mb-2">
             {t("support.messageLabel", "Ваше сообщение")}
           </label>
@@ -89,6 +89,7 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
               </Button>
             )}
           </div>
+          {/* Просто зафриженное поле email */}
           <Input
             type="email"
             placeholder="E-mail"
@@ -110,11 +111,7 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
             className="gap-2"
           >
             <Send className="h-4 w-4" />
-            {sending
-              ? t("support.sending", "Отправка…")
-              : sent
-                ? t("support.sent", "Отправлено")
-                : t("support.send", "Отправить")}
+            {t("support.send", "Отправить")}
           </Button>
           <Button type="button" variant="secondary" onClick={handleClose}>
             {t("support.cancel", "Отмена")}
