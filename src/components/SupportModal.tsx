@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useUser } from "@/contexts/UserContext";
 import { useTranslation } from "react-i18next";
@@ -9,7 +8,6 @@ import { Paperclip, Send, X } from "lucide-react";
 
 export function SupportModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t } = useTranslation();
-  const { user, profile } = useUser();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -34,7 +32,7 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent>
-        {/* Хедер: одна строка */}
+        {/* Один заголовок и один крестик */}
         <div className="flex flex-row items-center justify-between mb-2">
           <span className="text-lg font-bold">{t("support.title", "Ваше сообщение")}</span>
           <Button variant="ghost" size="icon" onClick={handleClose} tabIndex={-1}>
@@ -42,9 +40,6 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
           </Button>
         </div>
         <form onSubmit={handleSubmit}>
-          <label className="block text-sm font-medium mb-2">
-            {t("support.messageLabel", "Ваше сообщение")}
-          </label>
           <Textarea
             placeholder={t("support.messagePlaceholder", "Опишите проблему или задайте вопрос")}
             rows={4}
@@ -54,10 +49,7 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
             disabled={sending || sent}
             maxLength={3000}
           />
-          <label className="block text-sm font-medium mt-4 mb-1">
-            {t("support.attachment", "Вложение (картинка, PDF или другое)")}
-          </label>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mt-4">
             <Button
               type="button"
               variant="outline"
@@ -89,19 +81,11 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
               </Button>
             )}
           </div>
-          <Input
-            type="email"
-            placeholder="E-mail"
-            value={profile?.email ?? user?.email ?? ""}
-            disabled
-            className="mt-2"
-          />
           {sent && (
             <div className="text-green-600 text-sm mt-2">
-              {t("support.success", "Спасибо, сообщение отправлено! Мы свяжемся с вами как можно скорее.")}
+              {t("support.success", "Спасибо, сообщение отправлено! Мы свяжемся с вами как можно скорее и пришлём ответ на почту.")}
             </div>
           )}
-          {/* Кнопки управления внизу */}
           <div className="flex justify-end gap-2 mt-6">
             <Button
               type="submit"
