@@ -7,8 +7,6 @@ import { useUser } from "@/contexts/UserContext";
 import { useTranslation } from "react-i18next";
 import { Paperclip, Send, X } from "lucide-react";
 
-// Ничего не придумываю, использую твои internal imports и логику
-
 export function SupportModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t } = useTranslation();
   const { user, profile } = useUser();
@@ -20,6 +18,7 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
 
   const handleAttachClick = () => fileInputRef.current?.click();
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => setFile(e.target.files?.[0] || null);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
@@ -34,12 +33,13 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogHeader className="flex flex-row items-center justify-between mb-2">
-        <DialogTitle className="text-lg font-bold">{t("support.title", "Связаться с поддержкой")}</DialogTitle>
+      {/* Заголовок и крестик — ниже, на одном уровне, с отступом сверху */}
+      <div className="flex flex-row items-center justify-between pt-6 px-6">
+        <DialogTitle className="text-lg font-bold">{t("support.title", "Ваше сообщение")}</DialogTitle>
         <Button variant="ghost" size="icon" onClick={handleClose}>
           <X className="h-5 w-5" />
         </Button>
-      </DialogHeader>
+      </div>
       <form onSubmit={handleSubmit}>
         <DialogContent className="space-y-4 pt-2">
           <label className="block text-sm font-medium mb-2">
@@ -89,7 +89,6 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
               </Button>
             )}
           </div>
-          {/* Email пользователя подтягиваем, если есть */}
           <Input
             type="email"
             placeholder="E-mail"
