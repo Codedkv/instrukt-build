@@ -31,12 +31,9 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent>
-        {/* Только один крестик с заголовком */}
-        <div className="flex flex-row items-center justify-between mb-2">
+        {/* Заголовок — БЕЗ ручного крестика */}
+        <div className="mb-2">
           <span className="text-lg font-bold">{t("support.title", "Ваше сообщение")}</span>
-          <Button variant="ghost" size="icon" onClick={handleClose} tabIndex={-1}>
-            <X className="h-5 w-5" />
-          </Button>
         </div>
         <form onSubmit={handleSubmit}>
           <Textarea
@@ -90,7 +87,7 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
               type="submit"
               variant="primary"
               disabled={sending || sent || !message}
-              className="gap-2 hover:bg-primary/90" // добавлен hover-эффект, если нужен явно
+              className="gap-2 hover:bg-primary/90"
             >
               <Send className="h-4 w-4" />
               {t("support.send", "Отправить")}
