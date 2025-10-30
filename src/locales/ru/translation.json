@@ -259,5 +259,13 @@
 "quizDeleteConfirm": "Удалить тест? Это действие необратимо.",
 "quizRequired": "Тест обязателен для завершения урока",
 "quizMinQuestions": "Минимум 1 вопрос требуется",
-"quizValidationError": "Проверьте правильность заполнения теста"
+"quizValidationError": "Проверьте правильность заполнения теста",
+"support.title": "Ваше сообщение",
+"support.messagePlaceholder": "Опишите проблему или задайте вопрос",
+"support.attach": "Прикрепить файл",
+"support.removeFile": "Удалить",
+"support.send": "Отправить",
+"support.cancel": "Отмена",
+"support.success": "Спасибо, сообщение отправлено! Мы свяжемся с Вами по почте, указанной при регистрации в PerplexitySchool."
+
 }
