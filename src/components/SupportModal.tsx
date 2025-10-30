@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useUser } from "@/contexts/UserContext";
 import { useTranslation } from "react-i18next";
 import { Paperclip, Send, X } from "lucide-react";
 
@@ -32,7 +31,7 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent>
-        {/* Один заголовок и один крестик */}
+        {/* Только один крестик с заголовком */}
         <div className="flex flex-row items-center justify-between mb-2">
           <span className="text-lg font-bold">{t("support.title", "Ваше сообщение")}</span>
           <Button variant="ghost" size="icon" onClick={handleClose} tabIndex={-1}>
@@ -83,7 +82,7 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
           </div>
           {sent && (
             <div className="text-green-600 text-sm mt-2">
-              {t("support.success", "Спасибо, сообщение отправлено! Мы свяжемся с вами как можно скорее и пришлём ответ на почту.")}
+              Спасибо, сообщение отправлено! Мы свяжемся с Вами по почте, указанной при регистрации в PerplexitySchool.
             </div>
           )}
           <div className="flex justify-end gap-2 mt-6">
@@ -91,7 +90,7 @@ export function SupportModal({ open, onClose }: { open: boolean; onClose: () => 
               type="submit"
               variant="primary"
               disabled={sending || sent || !message}
-              className="gap-2"
+              className="gap-2 hover:bg-primary/90" // добавлен hover-эффект, если нужен явно
             >
               <Send className="h-4 w-4" />
               {t("support.send", "Отправить")}
